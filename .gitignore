@@ -56,3 +56,6 @@ Thumbs.db
 *.pb
 *.scorer
 *.hdf5
+
+# Venv
+sub/*
