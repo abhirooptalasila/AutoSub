@@ -1,44 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-Sample script to generate subs for video files
-
-Dependencies: 
-    DeepSpeech -> 0.8.2             # pip3 install deepspeech==0.8.2
-    FFMPEG -> 4.1.4                  # sudo apt install ffmpeg
-    Sox - > 14.4.2                    # sudo apt install sox
-
-After installing DeepSpeech, download model and scorer files into the same directory
-    Model (~180 MB): https://github.com/mozilla/DeepSpeech/releases/download/v0.8.2/deepspeech-0.8.2-models.pbmm
-    Scorer (~900 MB) :https://github.com/mozilla/DeepSpeech/releases/download/v0.8.2/deepspeech-0.8.2-models.scorer
-    
-How to run:
-
-
-Author: Abhiroop Talasila 
-Date: 13th July 2020
-E-mail: abhiroop.talasila@gmail.com
-"""
-
-
 import os
-import glob
 import wave
 import sys
 import json
 import numpy as np
 import subprocess
+from tqdm import tqdm
 from deepspeech import Model, version 
 from timeit import default_timer as timer
+from segment_audio import silenceRemoval
+#tqdm(enumerate(segmentLimits), ascii ="123456789$")
+import re
+def sorted_alphanumeric(data):
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+    return sorted(data, key=alphanum_key)
 
-def extract_audio(video_file, video_file_name):
-    command = "ffmpeg -hide_banner -loglevel warning -i {} -b:a 192k -ac 1 -ar 16000 -vn {}".format(video_file, os.path.join(os.getcwd(), "audio", video_file_name))
+def extract_audio(video_file, audio_file_name):
+    command = "ffmpeg -hide_banner -loglevel warning -i {} -b:a 192k -ac 1 -ar 16000 -vn {}".format(video_file, os.path.join(os.getcwd(), "audio", audio_file_name))
     try:
         ret = subprocess.call(command, shell=True)
     except Exception as e:
         print("Error: ", str(e))
-    print("Extracted audio to audio/{}".format(video_file_name))
+    print("Extracted audio to audio/{}".format(audio_file_name))
         
 
 
@@ -56,11 +42,8 @@ def convert_samplerate(audio_path, desired_sample_rate):
 
     return np.frombuffer(output, np.int16)
 
-def ds_process_audio(ds_model, ds_scorer, video_file_name):
-    ds = Model(ds_model)
-    ds.enableExternalScorer(ds_scorer)
-    
-    audio_file = os.path.join(os.getcwd(), "audio", video_file_name)
+def ds_process_audio(ds, audio_segment):    
+    audio_file = os.path.join(os.getcwd(), "audio", audio_segment)
     fin = wave.open(audio_file, 'rb')
     fs_orig = fin.getframerate()
     desired_sample_rate = ds.sampleRate()
@@ -75,18 +58,15 @@ def ds_process_audio(ds_model, ds_scorer, video_file_name):
     audio_length = fin.getnframes() * (1/fs_orig)
     fin.close()
     
-    print("\nRunning inference:", file=sys.stderr)
-    inference_start = timer()
+    #print("\nRunning inference:", file=sys.stderr)
+    #inference_start = timer()
 
-    # If JSON output is needed
-    #if args.json:
-    #print(metadata_json_output(ds.sttWithMetadata(audio, 3)))
-    #else:
+
     print(ds.stt(audio))
 
-    inference_end = timer() - inference_start
-    print("Inference took %0.3fs for %0.3fs audio file" %
-            (inference_end, audio_length), file=sys.stderr)
+    #inference_end = timer() - inference_start
+    #print("Inference took %0.3fs for %0.3fs audio file" %
+    #        (inference_end, audio_length), file=sys.stderr)
 
 
 def main():
@@ -120,10 +100,20 @@ def main():
     
     print("Input Video file: ")
     video_file = str(input())
-    video_file_name = video_file.split("/")[-1].split(".")[0] + ".wav"
-    extract_audio(video_file, video_file_name)
+    audio_file_name = video_file.split("/")[-1].split(".")[0] + ".wav"
+    extract_audio(video_file, audio_file_name)
     
-    ds_process_audio(ds_model, ds_scorer, video_file_name)
+    ds = Model(ds_model)
+    ds.enableExternalScorer(ds_scorer)
+    
+    print("Silence Removal")
+    silenceRemoval(os.path.join(os.getcwd(), "audio", audio_file_name))
+    
+    for file in tqdm(sorted_alphanumeric(os.listdir(os.path.join(os.getcwd(), "audio")))):
+        if file is not audio_file_name:
+            ds_process_audio(ds, file)
+    
+    
     
     
 if __name__ == "__main__":

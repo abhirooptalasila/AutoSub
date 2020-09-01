@@ -59,3 +59,4 @@ Thumbs.db
 
 # Venv
 sub/*
+__pycache__

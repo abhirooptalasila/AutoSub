@@ -1,14 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import numpy as np
-import glob
 from pydub import AudioSegment
 import scipy.io.wavfile as wavfile
 import matplotlib.pyplot as plt
 import ShortTermFeatures as stf
 import trainAudio as ta
-# Detect non-silent segments in a WAV file and
-        # output to seperate WAV files
-
 
 
 def read_audio_file(input_file):
