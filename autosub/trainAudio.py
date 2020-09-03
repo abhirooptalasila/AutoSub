@@ -1,10 +1,13 @@
-import sys
-import numpy as np
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
+import csv
+import sys
 import glob
 import signal
-import csv
 import ntpath
+import numpy as np
 import sklearn.svm
 
 shortTermWindow = 0.050
@@ -12,23 +15,22 @@ shortTermStep = 0.050
 eps = 0.00000001
 
 
-
 def train_svm(features, c_param, kernel='linear'):
-    """
-    Train a multi-class probabilitistic SVM classifier.
+    """Train a multi-class probabilitistic SVM classifier.
     Note:     This function is simply a wrapper to the sklearn functionality 
               for SVM training
               See function trainSVM_feature() to use a wrapper on both the 
               feature extraction and the SVM training
               (and parameter tuning) processes.
-    ARGUMENTS:
-        - features:         a list ([numOfClasses x 1]) whose elements 
-                            containt np matrices of features  each matrix 
-                            features[i] of class i is 
-                            [n_samples x numOfDimensions]
-        - c_param:           SVM parameter C (cost of constraints violation)
-    RETURNS:
-        - svm:              the trained SVM variable
+    Args:
+        features : a list ([numOfClasses x 1]) whose elements 
+                containt np matrices of features  each matrix 
+                features[i] of class i is 
+                [n_samples x numOfDimensions]
+        c_param : SVM parameter C (cost of constraints violation)
+        
+    Returns:
+        svm : the trained SVM variable
 
     NOTE:
         This function trains a linear-kernel SVM for a given C value.
@@ -43,18 +45,18 @@ def train_svm(features, c_param, kernel='linear'):
     return svm
 
 def normalize_features(features):
-    """
-    This function normalizes a feature set to 0-mean and 1-std.
-    Used in most classifier trainning cases.
+    """This function normalizes a feature set to 0-mean and 1-std
+    Used in most classifier trainning cases
 
-    ARGUMENTS:
-        - features:    list of feature matrices (each one of them is a np
-                       matrix)
-    RETURNS:
-        - features_norm:    list of NORMALIZED feature matrices
-        - mean:        mean vector
-        - std:        std vector
+    Args:
+        features : list of feature matrices (each one of them is a np matrix)
+        
+    Returns:
+        features_norm : list of NORMALIZED feature matrices
+        mean : mean vector
+        std : std vector
     """
+    
     temp_feats = np.array([])
 
     for count, f in enumerate(features):
@@ -78,18 +80,15 @@ def normalize_features(features):
 
 
 def features_to_matrix(features):
-    """
-    features_to_matrix(features)
-
-    This function takes a list of feature matrices as argument and returns
+    """This function takes a list of feature matrices as argument and returns
     a single concatenated feature matrix and the respective class labels.
 
-    ARGUMENTS:
-        - features:        a list of feature matrices
+    Args:
+        features : a list of feature matrices
 
-    RETURNS:
-        - feature_matrix:    a concatenated matrix of features
-        - labels:            a vector of class indices
+    Returns:
+        feature_matrix : a concatenated matrix of features
+        labels : a vector of class indices
     """
 
     labels = np.array([])
@@ -101,4 +100,5 @@ def features_to_matrix(features):
         else:
             feature_matrix = np.vstack((feature_matrix, f))
             labels = np.append(labels, i * np.ones((len(f), 1)))
+            
     return feature_matrix, labels

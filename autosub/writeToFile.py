@@ -4,7 +4,17 @@
 import os
 import datetime
 
-def write_to_file(file_handle, infered_text, line_count, limits):
+def write_to_file(file_handle, inferred_text, line_count, limits):
+    """Write the inferred text to SRT file
+    Follows a specific format for SRT files
+
+    Args:
+        file_handle : SRT file handle
+        inferred_text : text to be written
+        line_count : subtitle line count 
+        limits : starting and ending times for text
+    """
+    
     d = str(datetime.timedelta(seconds=float(limits[0])))
     try:
         from_dur = "0" + str(d.split(".")[0]) + "," + str(d.split(".")[-1][:2])
@@ -19,4 +29,4 @@ def write_to_file(file_handle, infered_text, line_count, limits):
         
     file_handle.write(str(line_count) + "\n")
     file_handle.write(from_dur + " --> " + to_dur + "\n")
-    file_handle.write(infered_text + "\n\n")
+    file_handle.write(inferred_text.capitalize() + "\n\n")
