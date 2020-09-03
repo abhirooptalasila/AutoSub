@@ -6,8 +6,8 @@ import numpy as np
 from pydub import AudioSegment
 import scipy.io.wavfile as wavfile
 import matplotlib.pyplot as plt
-import ShortTermFeatures as stf
-import trainAudio as ta
+import featureExtraction as FE
+import trainAudio as TA
 
 
 def read_audio_file(input_file):
@@ -97,7 +97,7 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
 
     # Step 1: feature extraction
     signal = stereo_to_mono(signal)
-    st_feats, _ = stf.feature_extraction(signal, sampling_rate,
+    st_feats, _ = FE.feature_extraction(signal, sampling_rate,
                                          st_win * sampling_rate,
                                          st_step * sampling_rate)
 
@@ -125,8 +125,8 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
     # normalize and train the respective svm probabilistic model
 
     # (ONSET vs SILENCE)
-    features_norm, mean, std = ta.normalize_features(features)
-    svm = ta.train_svm(features_norm, 1.0)
+    features_norm, mean, std = TA.normalize_features(features)
+    svm = TA.train_svm(features_norm, 1.0)
 
     # Step 3: compute onset probability based on the trained svm
     prob_on_set = []
