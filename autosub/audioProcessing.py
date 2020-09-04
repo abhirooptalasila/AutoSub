@@ -16,7 +16,7 @@ def extract_audio(input_file, audio_file_name):
     command = "ffmpeg -hide_banner -loglevel warning -i {} -b:a 192k -ac 1 -ar 16000 -vn {}".format(input_file, audio_file_name)
     try:
         ret = subprocess.call(command, shell=True)
-        print("\nExtracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
+        print("Extracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
     except Exception as e:
         print("Error: ", str(e))
         exit(1)

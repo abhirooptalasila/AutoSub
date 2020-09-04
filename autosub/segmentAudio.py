@@ -4,7 +4,6 @@
 import os
 import numpy as np
 from pydub import AudioSegment
-import matplotlib.pyplot as plt
 import scipy.io.wavfile as wavfile
 import featureExtraction as FE
 import trainAudio as TA

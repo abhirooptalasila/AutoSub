@@ -29,4 +29,4 @@ def write_to_file(file_handle, inferred_text, line_count, limits):
         
     file_handle.write(str(line_count) + "\n")
     file_handle.write(from_dur + " --> " + to_dur + "\n")
-    file_handle.write(inferred_text.capitalize() + "\n\n")
+    file_handle.write(inferred_text + "\n\n")

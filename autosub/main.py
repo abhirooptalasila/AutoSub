@@ -95,7 +95,7 @@ def main():
             ds.enableExternalScorer(ds_scorer)
     
     input_file = args.file
-    print("Input file: ", input_file)
+    print("\nInput file:", input_file)
     
     base_directory = os.getcwd()
     output_directory = os.path.join(base_directory, "output")
@@ -118,7 +118,7 @@ def main():
     for file in tqdm(sort_alphanumeric(os.listdir(audio_directory))):
         audio_segment_path = os.path.join(audio_directory, file)
         
-        # Dont run inference on the original audio
+        # Dont run inference on the original audio file
         if audio_segment_path.split("/")[-1] != audio_file_name.split("/")[-1]:
             ds_process_audio(ds, audio_segment_path, file_handle)
             

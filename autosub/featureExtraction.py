@@ -4,7 +4,6 @@
 import math
 import numpy as np
 from scipy.fftpack import fft
-import matplotlib.pyplot as plt
 from scipy.signal import lfilter
 from scipy.fftpack.realtransforms import dct
 
