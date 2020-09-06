@@ -1,22 +1,28 @@
-import setuptools
+import os
+from setuptools import setup
+
+DIR = os.path.dirname(os.path.abspath(__file__))
+INSTALL_PACKAGES = open(os.path.join(DIR, 'requirements.txt')).read().splitlines()
 
 with open("README.md", "r") as fh:
-    long_description = fh.read()
+    README = fh.read()
 
-setuptools.setup(
-    name="AutoSub", # Replace with your own username
+setup(
+    name="AutoSub",
+    packages="autosub",
     version="0.0.1",
     author="Abhiroop Talasila",
     author_email="abhiroop.talasila@gmail.com",
-    description="Automatically generate subtitles for any video file using STT",
-    long_description=long_description,
+    description="CLI application to generate subtitle file (.srt) for any video file using using STT",
+    long_description=README,
+    install_requires=INSTALL_PACKAGES,
     long_description_content_type="text/markdown",
     url="https://github.com/abhirooptalasila/AutoSub",
-    packages=setuptools.find_packages(),
+    keywords=['speech-to-text','deepspeech','machine-learning'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.5',
 )
