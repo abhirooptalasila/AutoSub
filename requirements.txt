@@ -1,4 +1,5 @@
 cycler==0.10.0
+Cython==0.29.21
 numpy==1.18.1
 deepspeech==0.8.2
 joblib==0.16.0

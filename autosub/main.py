@@ -47,6 +47,7 @@ def ds_process_audio(ds, audio_file, file_handle):
     desired_sample_rate = ds.sampleRate()
     
     # Check if sampling rate is required rate (16000)
+    # won't be carried out as FFmpeg already converts to 16kHz
     if fs_orig != desired_sample_rate:
         print("Warning: original sample rate ({}) is different than {}hz. Resampling might produce erratic speech recognition".format(fs_orig, desired_sample_rate), file=sys.stderr)
         audio = convert_samplerate(audio_file, desired_sample_rate)
