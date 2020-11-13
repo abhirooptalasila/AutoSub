@@ -50,8 +50,7 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     $ ffmpeg -version               # I'm running 4.1.4
     ```
     
-* [OPTIONAL] If you would like the subtitles to be generated faster, you can use the gpu instead of cpu with the following command. You many need
-to install appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.1/USING.html#cuda-deps) version. 
+* [OPTIONAL] If you would like the subtitles to be generated faster, you can use the GPU package instead. Make sure to install the appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.1/USING.html#cuda-deps) version. 
     ```bash
     $ source sub/bin/activate
     $ pip3 install deepspeech-gpu
