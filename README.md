@@ -49,8 +49,13 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     $ sudo apt-get install ffmpeg
     $ ffmpeg -version               # I'm running 4.1.4
     ```
-
-
+    
+* [OPTIONAL] If you would like the subtitles to be generated faster, you can use the GPU package instead. Make sure to install the appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.1/USING.html#cuda-deps) version. 
+    ```bash
+    $ source sub/bin/activate
+    $ pip3 install deepspeech-gpu
+    ```
+    
 ## How-to example
 
 * After following the installation instructions, you can run `autosub/main.py` as given below. `--model` and `--scorer` arguments take the absolute paths of the respective files. The `--file` argument is the video file for which SRT file is to be generated
