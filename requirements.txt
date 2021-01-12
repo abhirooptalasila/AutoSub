@@ -1,7 +1,7 @@
 cycler==0.10.0
 Cython==0.29.21
-numpy==1.18.1
-deepspeech==0.8.2
+numpy
+deepspeech
 joblib==0.16.0
 kiwisolver==1.2.0
 pydub==0.23.1
