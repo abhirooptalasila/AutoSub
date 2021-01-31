@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import wave
+import shutil
 import argparse
 import subprocess
 import numpy as np
@@ -125,6 +126,10 @@ def main():
             
     print("\nSRT file saved to", srt_file_name)
     file_handle.close()
+
+    # Clean audio/ directory 
+    shutil.rmtree(audio_directory)
+    os.mkdir(audio_directory)
         
 if __name__ == "__main__":
     main()
