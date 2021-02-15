@@ -61,7 +61,7 @@ def ds_process_audio(ds, audio_file, file_handle):
     infered_text = ds.stt(audio)
     
     # File name contains start and end times in seconds. Extract that
-    limits = audio_file.split("/")[-1][:-4].split("_")[-1].split("-")
+    limits = audio_file.split(os.sep)[-1][:-4].split("_")[-1].split("-")
     
     if len(infered_text) != 0:
         line_count += 1
@@ -102,7 +102,7 @@ def main():
     base_directory = os.getcwd()
     output_directory = os.path.join(base_directory, "output")
     audio_directory = os.path.join(base_directory, "audio")
-    video_file_name = input_file.split("/")[-1].split(".")[0]
+    video_file_name = input_file.split(os.sep)[-1].split(".")[0]
     audio_file_name = os.path.join(audio_directory, video_file_name + ".wav")
     srt_file_name = os.path.join(output_directory, video_file_name + ".srt")
     
@@ -121,7 +121,7 @@ def main():
         audio_segment_path = os.path.join(audio_directory, file)
         
         # Dont run inference on the original audio file
-        if audio_segment_path.split("/")[-1] != audio_file_name.split("/")[-1]:
+        if audio_segment_path.split(os.sep)[-1] != audio_file_name.split(os.sep)[-1]:
             ds_process_audio(ds, audio_segment_path, file_handle)
             
     print("\nSRT file saved to", srt_file_name)
