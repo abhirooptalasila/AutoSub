@@ -36,9 +36,9 @@ In the age of OTT platforms, there are still some who prefer to download movies/
 * Download the model and scorer files from DeepSpeech repo. The scorer file is optional, but it greatly improves inference results.
     ```bash
     # Model file (~190 MB)
-    $ wget https://github.com/mozilla/DeepSpeech/releases/download/v0.8.2/deepspeech-0.8.2-models.pbmm
-    # Scorer file (~900 MB)
-    $ wget https://github.com/mozilla/DeepSpeech/releases/download/v0.8.2/deepspeech-0.8.2-models.scorer
+    $ wget https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.pbmm
+    # Scorer file (~950 MB)
+    $ wget https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer
     ```
 * Create two folders `audio/` and `output/` to store audio segments and final SRT file
     ```bash
@@ -50,7 +50,7 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     $ ffmpeg -version               # I'm running 4.1.4
     ```
     
-* [OPTIONAL] If you would like the subtitles to be generated faster, you can use the GPU package instead. Make sure to install the appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.1/USING.html#cuda-deps) version. 
+* [OPTIONAL] If you would like the subtitles to be generated faster, you can use the GPU package instead. Make sure to install the appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.3/USING.html#cuda-dependency-inference) version. 
     ```bash
     $ source sub/bin/activate
     $ pip3 install deepspeech-gpu
@@ -60,7 +60,7 @@ In the age of OTT platforms, there are still some who prefer to download movies/
 
 * After following the installation instructions, you can run `autosub/main.py` as given below. `--model` and `--scorer` arguments take the absolute paths of the respective files. The `--file` argument is the video file for which SRT file is to be generated
     ```bash
-    $ python3 autosub/main.py --model /home/AutoSub/deepspeech-0.8.2-models.pbmm --scorer /home/AutoSub/deepspeech-0.8.2-models.scorer --file ~/movie.mp4
+    $ python3 autosub/main.py --model /home/AutoSub/deepspeech-0.9.3-models.pbmm --scorer /home/AutoSub/deepspeech-0.9.3-models.scorer --file ~/movie.mp4
     ```
 * After the script finishes, the SRT file is saved in `output/`
 * Open the video file and add this SRT file as a subtitle, or you can just drag and drop in VLC.
@@ -78,7 +78,7 @@ When I tested the script on my laptop, it took about **40 minutes to generate th
 ## TO-DO
 
 * Pre-process inferred text before writing to file (prettify)
-* Add progress bar to extract_audio()
+* Add progress bar to `extract_audio()`
 * GUI support (?)
 
 
