@@ -96,8 +96,12 @@ def main():
         else:
             ds.enableExternalScorer(ds_scorer)
     
-    input_file = args.file
-    print("\nInput file:", input_file)
+    if os.path.isfile(args.file):
+        input_file = args.file
+        print("\nInput file:", input_file)
+    else:
+        print(args.file, ": No such file exists")
+        sys.exit(1)
     
     base_directory = os.getcwd()
     output_directory = os.path.join(base_directory, "output")

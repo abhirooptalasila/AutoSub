@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import subprocess
 import numpy as np
 
@@ -19,7 +20,7 @@ def extract_audio(input_file, audio_file_name):
         print("Extracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
     except Exception as e:
         print("Error: ", str(e))
-        exit(1)
+        sys.exit(1)
 
 
 def convert_samplerate(audio_path, desired_sample_rate):
