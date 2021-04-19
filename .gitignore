@@ -1,23 +1,5 @@
-# Node artifact files
-node_modules/
-dist/
-
-# Compiled Java class files
-*.class
-
 # Compiled Python bytecode
 *.py[cod]
-
-
-# Package files
-*.jar
-
-# Maven
-target/
-dist/
-
-# JetBrains IDE
-.idea/
 
 # Unit test reports
 TEST*.xml
@@ -42,7 +24,7 @@ Thumbs.db
 *.wmv
 *.wav
 
-# Juoyter NoteBook Checkpoints
+# Jupyter Notebook Checkpoints
 *.ipynb_checkpoints
 
 # VSCode files
@@ -56,7 +38,13 @@ Thumbs.db
 *.pb
 *.scorer
 *.hdf5
+*.h5
 
 # Venv
 sub/*
 __pycache__
+
+# Folders
+audio/
+sub/
+output/
