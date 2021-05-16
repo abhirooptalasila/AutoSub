@@ -14,7 +14,8 @@ def extract_audio(input_file, audio_file_name):
         audio_file_name: save audio WAV file with same filename as video file
     """
     
-    command = "ffmpeg -hide_banner -loglevel warning -i {} -b:a 192k -ac 1 -ar 16000 -vn {}".format(input_file, audio_file_name)
+    command = "ffmpeg -hide_banner -loglevel warning -i {} -b:a 192k -ac 1 -ar 16000 -vn {}".format(
+        input_file, audio_file_name.replace(" ", "\ "))
     try:
         ret = subprocess.call(command, shell=True)
         print("Extracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
@@ -35,7 +36,8 @@ def convert_samplerate(audio_path, desired_sample_rate):
         numpy buffer: audio signal stored in numpy array
     """
     
-    sox_cmd = "sox {} --type raw --bits 16 --channels 1 --rate {} --encoding signed-integer --endian little --compression 0.0 --no-dither norm -3.0 - ".format(
+    sox_cmd = "sox {} --type raw --bits 16 --channels 1 --rate {} --encoding signed-integer \
+        --endian little --compression 0.0 --no-dither norm -3.0 - ".format(
         quote(audio_path), desired_sample_rate)
     try:
         output = subprocess.check_output(

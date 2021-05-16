@@ -1,0 +1,19 @@
+# VSCode files
+*.vscode
+*.settings
+*.classpath
+*.project
+
+# Model files
+*.pb
+*.hdf5
+*.h5
+
+# Venv
+sub/*
+__pycache__
+
+# Folders
+audio/
+sub/
+output/
