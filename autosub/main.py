@@ -101,15 +101,7 @@ def ds_process_audio(ds, audio_file, file_handle, vtt, split_duration):
 def main():
     global line_count
     print("AutoSub\n")
-        
-    parser = argparse.ArgumentParser(description="AutoSub")
-    parser.add_argument('--file', required=True,
-                        help='Input video file')
-    parser.add_argument('--vtt', dest="vtt", action="store_true",
-                        help='Output a vtt file with cue points for individual words instead of a srt file')
-    parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
-    args = parser.parse_args()
-    
+
     for x in os.listdir():
         if x.endswith(".pbmm"):
             print("Model: ", os.path.join(os.getcwd(), x))
@@ -129,6 +121,15 @@ def main():
         ds.enableExternalScorer(ds_scorer)
     except:
         print("Invalid scorer file. Running inference using only model file\n")
+
+
+    parser = argparse.ArgumentParser(description="AutoSub")
+    parser.add_argument('--file', required=True,
+                        help='Input video file')
+    parser.add_argument('--vtt', dest="vtt", action="store_true",
+                        help='Output a vtt file with cue points for individual words instead of a srt file')
+    parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
+    args = parser.parse_args()
 
     if os.path.isfile(args.file):
         input_file = args.file
