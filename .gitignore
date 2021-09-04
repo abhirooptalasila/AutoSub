@@ -24,6 +24,8 @@ Thumbs.db
 *.mov
 *.wmv
 *.wav
+*.srt
+*.vtt
 
 # Jupyter Notebook Checkpoints
 *.ipynb_checkpoints
