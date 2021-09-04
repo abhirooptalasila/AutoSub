@@ -1,22 +1,25 @@
-FROM python:3.8-slim-buster
+ARG BASEIMAGE=ubuntu:18.04
+#ARG BASEIMAGE=nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
+
+FROM ${BASEIMAGE}
+
+ARG DEPSLIST=requirements.txt
+#ARG DEPSLIST=requirements-gpu.txt
 
 ENV PYTHONUNBUFFERED 1
 
-ARG model
+RUN DEBIAN_FRONTEND=noninteractive apt update && \
+    apt -y install ffmpeg libsm6 libxext6 python3 python3-pip && \
+    apt -y clean && \
+	rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && \
-    apt-get install wget curl ffmpeg libsm6 libxext6 -y && \
-    apt-get clean
-
-COPY . .
-
+COPY $DEPSLIST ./requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-ENV model_url=https://github.com/mozilla/DeepSpeech/releases/download/v$model/deepspeech-$model-models.pbmm
-ENV scorer_url=https://github.com/mozilla/DeepSpeech/releases/download/v$model/deepspeech-$model-models.scorer
-
-RUN wget ${model_url} && \
-    wget ${scorer_url}
+COPY *.pbmm ./
+COPY *.scorer ./
+COPY setup.py ./
+COPY autosub ./autosub
 
 RUN mkdir audio output
 
