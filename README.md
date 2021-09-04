@@ -60,13 +60,31 @@ In the age of OTT platforms, there are still some who prefer to download movies/
 
 ## Docker
 
-* Installation using Docker is pretty straight-forward. The `model` build-arg configures which model and scorer versions to use. You can manually edit them to point to other model files easily. 
+* Installation using Docker is pretty straight-forward.  
+	+ First start by downloading training models by specifying which version you want:
+		+ if you have your own, then skip this step and just ensure they are placed in project directory with .pbmm and .scorer extensions
     ```bash
-    $ docker build --build-arg model=0.9.3 -t ds-stt .
-    $ docker run ds-stt --file video.mp4
-    $ docker cp <container-name>:/output/ /<your-local-dir>/
+	$ ./getmodel.sh 0.9.3
+	```
+	
+	+ Then for a CPU build, run: 
+	```bash
+	$ docker build -t autosub .
+    $ docker run -v <MOUNTOPTIONS> --name autosub autosub --file video.mp4
+    $ docker cp autosub:/output/ /<your-local-dir>/
     ```
-* Make sure to use container name while copying to local.
+	
+	+ For a GPU build that is reusable (saving time on instantiating the program):
+	```bash
+	$ docker build --build-arg BASEIMAGE=nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 --build-arg DEPSLIST=requirements-gpu.txt -t autosub-base . && \
+ 		docker run --gpus all --name autosub-base autosub-base || \
+		docker commit autosub-base autosub-instance
+	```
+		+ Then
+	```bash
+	$ docker run -v <MOUNTOPTION> --name autosub autosub-instance --file video.mp4
+    $ docker cp autosub:/output/ /<your-local-dir>/
+	```
 
 
 ## How-to example
