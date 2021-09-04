@@ -148,8 +148,15 @@ def main():
     srt_file_name = os.path.join(output_directory, video_file_name + srt_extension)
 
     # Clean audio/ directory 
-    shutil.rmtree(audio_directory)
-    os.mkdir(audio_directory)
+    for filename in os.listdir(audio_directory):
+        file_path = os.path.join(audio_directory, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     # Extract audio from input video file
     extract_audio(input_file, audio_file_name)
