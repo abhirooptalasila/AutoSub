@@ -13,6 +13,10 @@ Thumbs.db
 #VIM swp files
 *.swp
 
+#scripts folder
+scripts
+test.sh
+
 # Applications
 *.app
 *.exe
