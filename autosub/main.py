@@ -104,6 +104,8 @@ def main():
                         help='Input video file')
     parser.add_argument('--vtt', dest="vtt", action="store_true",
                         help='Output a vtt file with cue points for individual words instead of a srt file')
+    parser.add_argument('--overwrite', dest="overwrite", action="store_true",
+                        help='Force Overwrite if SRT or VTT exists?')
     args = parser.parse_args()
 
     if os.path.isfile(args.file):
@@ -122,10 +124,13 @@ def main():
     srt_file_name = os.path.join(output_directory, video_file_name + srt_extension)
     
     if os.path.exists(srt_file_name):
-        try:
-            os.remove(srt_file_name)
-        except Exception as e:
-            print('ERROR: %s exists and it cannot be deleted. REASON: %s. Please rectify before re-running.' % (srt_file_name, e))
+        if args.overwrite:
+            try:
+                os.remove(srt_file_name)
+            except Exception as e:
+                sys.exit('ERROR: %s exists and it cannot be deleted. REASON: %s. Please rectify before re-running.' % (srt_file_name, e))
+        else:
+            sys.exit('ERROR: SRT file %s exists and I do not have permission to overwrite it. Please use --overwrite to proceed.' % (srt_file_name)) 
 
     # Clean audio/ directory 
     for filename in os.listdir(audio_directory):
