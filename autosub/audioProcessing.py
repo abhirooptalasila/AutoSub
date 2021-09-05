@@ -4,7 +4,7 @@
 import sys
 import subprocess
 import numpy as np
-
+import os
 
 def extract_audio(input_file, audio_file_name):
     """Extract audio from input video file and save to audio/ in root dir
@@ -18,7 +18,7 @@ def extract_audio(input_file, audio_file_name):
         input_file, audio_file_name)
     try:
         ret = subprocess.call(command, shell=True)
-        print("Extracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
+        print("Extracted audio to audio/{}".format(os.path.split(audio_file_name)[1]))
     except Exception as e:
         print("Error: ", str(e))
         sys.exit(1)
