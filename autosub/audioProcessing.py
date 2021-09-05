@@ -15,7 +15,7 @@ def extract_audio(input_file, audio_file_name):
     """
     
     command = "ffmpeg -hide_banner -loglevel warning -i '{}' -ac 1 -ar 16000 -vn -f wav '{}'".format(
-        input_file, audio_file_name)
+        input_file.replace("'","'"'"'"'"'"'"'"), audio_file_name.replace("'","'"'"'"'"'"'"'"))
     try:
         ret = subprocess.call(command, shell=True)
         print("Extracted audio to audio/{}".format(os.path.split(audio_file_name)[1]))
