@@ -18,15 +18,17 @@ def write_to_file(file_handle, inferred_text, line_count, limits, vtt, cues):
     sep = '.' if vtt else ','
     
     d = str(datetime.timedelta(seconds=float(limits[0])))
-    try:
-        from_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:2])
-    except:
+
+    # d may be eg, '0:00:14'
+    if '.' in d:
+            from_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:2])
+    else:
         from_dur = "0" + str(d) + sep + "00"
-        
+
     d = str(datetime.timedelta(seconds=float(limits[1])))
-    try:
+    if '.' in d:
         to_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:2])
-    except:
+    else:
         to_dur = "0" + str(d) + sep + "00"
 
     if not vtt:    
