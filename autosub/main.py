@@ -32,14 +32,16 @@ def sort_alphanumeric(data):
     return sorted(data, key = alphanum_key)
 
 
-def ds_process_audio(ds, audio_file, file_handle, vtt):  
+def ds_process_audio(ds, audio_file, file_handle, vtt, split_duration):
     """Run DeepSpeech inference on each audio file generated after silenceRemoval
     and write to file pointed by file_handle
 
     Args:
         ds : DeepSpeech Model
         audio_file : audio file
-        file_handle : SRT file handle
+        file_handle : file handle
+        vtt: Is Video Text Tracks format
+        split_duration: for long audio segments, split the subtitle based on this number of seconds
     """
     
     global line_count
@@ -60,18 +62,40 @@ def ds_process_audio(ds, audio_file, file_handle, vtt):
     
     # Perform inference on audio segment
     metadata = ds.sttWithMetadata(audio)
-    infered_text = ''.join([x.text for x in metadata.transcripts[0].tokens])
-    
+
     # File name contains start and end times in seconds. Extract that
     limits = audio_file.split(os.sep)[-1][:-4].split("_")[-1].split("-")
-    
-    # Get time cues for each word
-    cues = [float(limits[0])] + [x.start_time + float(limits[0]) 
-        for x in metadata.transcripts[0].tokens if x.text == " "]
 
-    if len(infered_text) != 0:
-        line_count += 1
-        write_to_file(file_handle, infered_text, line_count, limits, vtt, cues)
+    # Run-on sentences are inferred as a single block, so write the sentence out as multiple separate lines
+    # based on a user-provided split duration.
+    current_token_index = 0
+    split_start_index = 0
+    previous_end_time = 0
+    # timestamps of word boundaries
+    cues = [float(limits[0])]
+    num_tokens = len(metadata.transcripts[0].tokens)
+    # Walk over each character in the current audio segment's inferred text
+    while current_token_index < num_tokens:
+        token = metadata.transcripts[0].tokens[current_token_index]
+        # If at a word boundary, get the timestamp for VTT cue data
+        if token.text == " ":
+            cues += [float(limits[0]) + token.start_time]
+        # time duration is exceeded and at the next word boundary
+        needs_split = ((token.start_time - previous_end_time) > split_duration) and token.text == " "
+        is_final_character = current_token_index+1 == num_tokens
+        # Write out the line
+        if needs_split or is_final_character:
+            # Determine the timestamps
+            split_limits = [float(limits[0]) + previous_end_time, float(limits[0]) + token.start_time]
+            # Convert character list to string. Upper bound has plus 1 as python list slices are [inclusive, exclusive]
+            split_inferred_text = ''.join([x.text for x in metadata.transcripts[0].tokens[split_start_index:current_token_index+1]])
+            write_to_file(file_handle, split_inferred_text, line_count, split_limits, vtt, cues)
+            # Reset and update indexes for the next subtitle split
+            previous_end_time = token.start_time
+            split_start_index = current_token_index + 1
+            cues = [float(limits[0])]
+            line_count += 1
+        current_token_index += 1
 
 
 def main():
@@ -83,6 +107,7 @@ def main():
                         help='Input video file')
     parser.add_argument('--vtt', dest="vtt", action="store_true",
                         help='Output a vtt file with cue points for individual words instead of a srt file')
+    parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
     args = parser.parse_args()
     
     for x in os.listdir():
@@ -146,7 +171,7 @@ def main():
         
         # Dont run inference on the original audio file
         if audio_segment_path.split(os.sep)[-1] != audio_file_name.split(os.sep)[-1]:
-            ds_process_audio(ds, audio_segment_path, file_handle, args.vtt)
+            ds_process_audio(ds, audio_segment_path, file_handle, args.vtt, split_duration=args.split_duration)
 
     if not args.vtt:        
         print("\nSRT file saved to", srt_file_name)
