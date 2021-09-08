@@ -153,7 +153,6 @@ def main():
     else:
         print("\nVTT file saved to", srt_file_name)
             
-    print("\nSRT file saved to", srt_file_name)
     file_handle.close()
         
 if __name__ == "__main__":
