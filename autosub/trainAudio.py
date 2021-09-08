@@ -17,18 +17,18 @@ eps = 0.00000001
 
 def train_svm(features, c_param, kernel='linear'):
     """Train a multi-class probabilitistic SVM classifier.
-    Note:     This function is simply a wrapper to the sklearn functionality 
+    Note:     This function is simply a wrapper to the sklearn functionality
               for SVM training
-              See function trainSVM_feature() to use a wrapper on both the 
+              See function trainSVM_feature() to use a wrapper on both the
               feature extraction and the SVM training
               (and parameter tuning) processes.
     Args:
-        features : a list ([numOfClasses x 1]) whose elements 
-                containt np matrices of features  each matrix 
-                features[i] of class i is 
+        features : a list ([numOfClasses x 1]) whose elements
+                containt np matrices of features  each matrix
+                features[i] of class i is
                 [n_samples x numOfDimensions]
         c_param : SVM parameter C (cost of constraints violation)
-        
+
     Returns:
         svm : the trained SVM variable
 
@@ -50,13 +50,13 @@ def normalize_features(features):
 
     Args:
         features : list of feature matrices (each one of them is a np matrix)
-        
+
     Returns:
         features_norm : list of NORMALIZED feature matrices
         mean : mean vector
         std : std vector
     """
-    
+
     temp_feats = np.array([])
 
     for count, f in enumerate(features):
@@ -100,5 +100,5 @@ def features_to_matrix(features):
         else:
             feature_matrix = np.vstack((feature_matrix, f))
             labels = np.append(labels, i * np.ones((len(f), 1)))
-            
+
     return feature_matrix, labels
