@@ -80,7 +80,7 @@ In the age of OTT platforms, there are still some who prefer to download movies/
 * Open the video file and add this SRT file as a subtitle, or you can just drag and drop in VLC.
 * WEB VTT Output (Credits - [@DerrickGibbs1](https://github.com/DerrickGibbs1)): Output VTT file including cue points for individual words. Nearly identical to VTT file downloaded from YouTube with youtube_dl.
     ```bash
-    $ python3 autosub/main.py --file ~/movie.mp4 -vtt
+    $ python3 autosub/main.py --file ~/movie.mp4 --vtt
     ```
 
 
