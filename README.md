@@ -77,8 +77,8 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     * For a GPU build that is reusable (saving time on instantiating the program):
     ```bash
     $ docker build --build-arg BASEIMAGE=nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 --build-arg DEPSLIST=requirements-gpu.txt -t autosub-base . && \
-    docker run --gpus all --name autosub-base autosub-base || \
-    docker commit autosub-base autosub-instance
+    docker run --gpus all --name autosub-base autosub-base --dry-run || \
+    docker commit --change 'CMD []' autosub-base autosub-instance
     ```
     * Then
     ```bash
