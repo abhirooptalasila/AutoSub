@@ -12,7 +12,7 @@
 
 ## About
 
-AutoSub is a CLI application to generate subtitle file (.srt) for any video file using [Mozilla DeepSpeech](https://github.com/mozilla/DeepSpeech). I use the DeepSpeech Python API to run inference on audio segments and [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis) to split the initial audio on silent segments, producing multiple small files.
+AutoSub is a CLI application to generate subtitle files (.srt, .vtt) for any video file using [Mozilla DeepSpeech](https://github.com/mozilla/DeepSpeech). I use the DeepSpeech Python API to run inference on audio segments and [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis) to split the initial audio on silent segments, producing multiple small files.
 
 ⭐ Featured in [DeepSpeech Examples](https://github.com/mozilla/DeepSpeech-examples) by Mozilla
 
@@ -41,7 +41,7 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     # Scorer file (~950 MB)
     $ wget https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer
     ```
-* Create two folders `audio/` and `output/` to store audio segments and final SRT file
+* Create two folders `audio/` and `output/` to store audio segments and final SRT and VTT file
     ```bash
     $ mkdir audio output
     ```
@@ -99,9 +99,9 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     ```bash
     $ python3 autosub/main.py --file ~/movie.mp4 --split-duration 8
     ```
-* WEB VTT Output (Credits - [@DerrickGibbs1](https://github.com/DerrickGibbs1)): Output VTT file including cue points for individual words. Nearly identical to VTT file downloaded from YouTube with youtube_dl.
+* By default, AutoSub outputs in a number of formats. To only produce the file formats you want use the `--format` argument:
     ```bash
-    $ python3 autosub/main.py --file ~/movie.mp4 --vtt
+    $ python3 autosub/main.py --file ~/movie.mp4 --format srt
     ```
 
 

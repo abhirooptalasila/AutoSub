@@ -21,29 +21,31 @@ def get_timestamp_string(timedelta, format):
     return timestamp
 
 
-def write_to_file(file_handle, inferred_text, line_count, limits, vtt, cues):
+def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cues):
     """Write the inferred text to SRT file
     Follows a specific format for SRT files
 
     Args:
-        file_handle : SRT file handle
+        output_file_handle_dict : Mapping of subtitle format (eg, 'srt') to open file_handle
         inferred_text : text to be written
         line_count : subtitle line count 
         limits : starting and ending times for text
     """
 
-    from_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[0])), format)
-    to_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[1])), format)
+    for format in output_file_handle_dict.keys():
+        from_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[0])), format)
+        to_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[1])), format)
 
-    if not vtt:    
-        file_handle.write(str(line_count) + "\n")
-        file_handle.write(from_dur + " --> " + to_dur + "\n")
-        file_handle.write(inferred_text + "\n\n")
-    else:
-        file_handle.write(from_dur + " --> " + to_dur + "  align:start position:0%\n")
-        file_handle.write(inferred_text + "\n")
-        
-        words = [f"<c> {x}</c>" for x in inferred_text.split(" ")]
-        cue_tags = [f"<{str(datetime.timedelta(seconds=cue))}>" for cue in cues]
-        words_cues_mixed = [val for pair in zip(cue_tags, words) for val in pair][1:]
-        file_handle.write(''.join(words_cues_mixed) + "\n\n")
+        file_handle = output_file_handle_dict[format]
+        if format == 'srt':
+            file_handle.write(str(line_count) + "\n")
+            file_handle.write(from_dur + " --> " + to_dur + "\n")
+            file_handle.write(inferred_text + "\n\n")
+        elif format == 'vtt':
+            file_handle.write(from_dur + " --> " + to_dur + "  align:start position:0%\n")
+            file_handle.write(inferred_text + "\n")
+
+            words = [f"<c> {x}</c>" for x in inferred_text.split(" ")]
+            cue_tags = [f"<{str(datetime.timedelta(seconds=cue))}>" for cue in cues]
+            words_cues_mixed = [val for pair in zip(cue_tags, words) for val in pair][1:]
+            file_handle.write(''.join(words_cues_mixed) + "\n\n")

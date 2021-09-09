@@ -32,15 +32,14 @@ def sort_alphanumeric(data):
     return sorted(data, key = alphanum_key)
 
 
-def ds_process_audio(ds, audio_file, file_handle, vtt, split_duration):
+def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
     """Run DeepSpeech inference on each audio file generated after silenceRemoval
     and write to file pointed by file_handle
 
     Args:
         ds : DeepSpeech Model
         audio_file : audio file
-        file_handle : file handle
-        vtt: Is Video Text Tracks format
+        output_file_handle_dict : Mapping of subtitle format (eg, 'srt') to open file_handle
         split_duration: for long audio segments, split the subtitle based on this number of seconds
     """
     
@@ -89,7 +88,7 @@ def ds_process_audio(ds, audio_file, file_handle, vtt, split_duration):
             split_limits = [float(limits[0]) + previous_end_time, float(limits[0]) + token.start_time]
             # Convert character list to string. Upper bound has plus 1 as python list slices are [inclusive, exclusive]
             split_inferred_text = ''.join([x.text for x in metadata.transcripts[0].tokens[split_start_index:current_token_index+1]])
-            write_to_file(file_handle, split_inferred_text, line_count, split_limits, vtt, cues)
+            write_to_file(output_file_handle_dict, split_inferred_text, line_count, split_limits, cues)
             # Reset and update indexes for the next subtitle split
             previous_end_time = token.start_time
             split_start_index = current_token_index + 1
@@ -122,12 +121,12 @@ def main():
     except:
         print("Invalid scorer file. Running inference using only model file\n")
 
-
+    supported_output_formats = ['srt', 'vtt']
     parser = argparse.ArgumentParser(description="AutoSub")
     parser.add_argument('--file', required=True,
                         help='Input video file')
-    parser.add_argument('--vtt', dest="vtt", action="store_true",
-                        help='Output a vtt file with cue points for individual words instead of a srt file')
+    parser.add_argument('--format', choices=supported_output_formats, nargs='+',
+                        help='Create only certain output formats rather than all formats', default=supported_output_formats)
     parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
     args = parser.parse_args()
 
@@ -143,16 +142,18 @@ def main():
     audio_directory = os.path.join(base_directory, "audio")
     video_file_name = input_file.split(os.sep)[-1].split(".")[0]
     audio_file_name = os.path.join(audio_directory, video_file_name + ".wav")
-    srt_extension = ".srt" if not args.vtt else ".vtt"
-    srt_file_name = os.path.join(output_directory, video_file_name + srt_extension)
-    
-    if os.path.exists(srt_file_name):
-        try:
-            os.remove(srt_file_name)
-        except Exception as e:
-            print('ERROR: %s exists and it cannot be deleted. REASON: %s. Please rectify before re-running.' % (srt_file_name, e))
 
-    # Clean audio/ directory 
+    output_file_handle_dict = {}
+    for format in args.format:
+        output_filename = os.path.join(output_directory, video_file_name + "." + format)
+        print("Creating file: " + output_filename)
+        output_file_handle_dict[format] = open(output_filename, "w")
+        # For VTT format, write header
+        if format == "vtt":
+            output_file_handle_dict[format].write("WEBVTT\n")
+            output_file_handle_dict[format].write("Kind: captions\n\n")
+
+    # Clean audio/ directory
     for filename in os.listdir(audio_directory):
         file_path = os.path.join(audio_directory, filename)
         try:
@@ -168,15 +169,7 @@ def main():
     
     print("Splitting on silent parts in audio file")
     silenceRemoval(audio_file_name)
-    
-    # Output SRT or VTT file
-    file_handle = open(srt_file_name, "a+")
-    file_handle.seek(0)
 
-    if args.vtt:
-        file_handle.write("WEBVTT\n")
-        file_handle.write("Kind: captions\n\n")
-    
     print("\nRunning inference:")
     
     for file in tqdm(sort_alphanumeric(os.listdir(audio_directory))):
@@ -184,14 +177,14 @@ def main():
         
         # Dont run inference on the original audio file
         if audio_segment_path.split(os.sep)[-1] != audio_file_name.split(os.sep)[-1]:
-            ds_process_audio(ds, audio_segment_path, file_handle, args.vtt, split_duration=args.split_duration)
+            ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)
 
-    if not args.vtt:        
-        print("\nSRT file saved to", srt_file_name)
-    else:
-        print("\nVTT file saved to", srt_file_name)
-            
-    file_handle.close()
-        
+    print("\n")
+    for format in output_file_handle_dict:
+        file_handle = output_file_handle_dict[format]
+        print(format.upper() + " file saved to", file_handle.name)
+        file_handle.close()
+
+
 if __name__ == "__main__":
     main()
