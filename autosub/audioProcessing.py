@@ -14,10 +14,9 @@ def extract_audio(input_file, audio_file_name):
         audio_file_name: save audio WAV file with same filename as video file
     """
     
-    command = "ffmpeg -hide_banner -loglevel warning -i {} -ac 1 -ar 16000 -vn -f wav {}".format(
-        input_file, audio_file_name.replace(" ", "\ "))
     try:
-        ret = subprocess.call(command, shell=True)
+        command = ["ffmpeg", "-hide_banner", "-loglevel", "warning", "-i", input_file, "-ac", "1", "-ar", "16000", "-vn", "-f", "wav", audio_file_name]
+        ret = subprocess.call(command)
         print("Extracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
     except Exception as e:
         print("Error: ", str(e))
