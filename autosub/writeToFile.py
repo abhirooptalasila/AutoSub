@@ -4,6 +4,23 @@
 import os
 import datetime
 
+
+def get_timestamp_string(timedelta, format):
+    """Convert the timedelta into something that can be used by a subtitle file.
+
+    Args:
+        timedelta : timedelta timestmap
+        format : subtitle format
+    """
+    sep = '.' if format == "vtt" else ','
+    # timedelta may be eg, '0:00:14'
+    if '.' in str(timedelta):
+        timestamp = "0" + str(timedelta).split(".")[0] + sep + str(timedelta).split(".")[-1][:3]
+    else:
+        timestamp = "0" + str(timedelta) + sep + "000"
+    return timestamp
+
+
 def write_to_file(file_handle, inferred_text, line_count, limits, vtt, cues):
     """Write the inferred text to SRT file
     Follows a specific format for SRT files
@@ -15,21 +32,8 @@ def write_to_file(file_handle, inferred_text, line_count, limits, vtt, cues):
         limits : starting and ending times for text
     """
 
-    sep = '.' if vtt else ','
-    
-    d = str(datetime.timedelta(seconds=float(limits[0])))
-
-    # d may be eg, '0:00:14'
-    if '.' in d:
-            from_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:3])
-    else:
-        from_dur = "0" + str(d) + sep + "000"
-
-    d = str(datetime.timedelta(seconds=float(limits[1])))
-    if '.' in d:
-        to_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:3])
-    else:
-        to_dur = "0" + str(d) + sep + "000"
+    from_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[0])), format)
+    to_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[1])), format)
 
     if not vtt:    
         file_handle.write(str(line_count) + "\n")
