@@ -16,7 +16,7 @@ from audioProcessing import extract_audio, convert_samplerate
 from writeToFile import write_to_file
 
 # Line count for SRT file
-line_count = 0
+line_count = 1
 
 def sort_alphanumeric(data):
     """Sort function to sort os.listdir() alphanumerically
