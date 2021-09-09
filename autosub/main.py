@@ -150,12 +150,12 @@ def main():
     base_directory = os.getcwd()
     output_directory = os.path.join(base_directory, "output")
     audio_directory = os.path.join(base_directory, "audio")
-    video_file_name = input_file.split(os.sep)[-1].split(".")[0]
-    audio_file_name = os.path.join(audio_directory, video_file_name + ".wav")
+    video_prefix = os.path.splitext(os.path.basename(input_file))[0]
+    audio_file_name = os.path.join(audio_directory, video_prefix + ".wav")
 
     output_file_handle_dict = {}
     for format in args.format:
-        output_filename = os.path.join(output_directory, video_file_name + "." + format)
+        output_filename = os.path.join(output_directory, video_prefix + "." + format)
         print("Creating file: " + output_filename)
         output_file_handle_dict[format] = open(output_filename, "w")
         # For VTT format, write header
