@@ -44,6 +44,7 @@ def train_svm(features, c_param, kernel='linear'):
 
     return svm
 
+
 def normalize_features(features):
     """This function normalizes a feature set to 0-mean and 1-std
     Used in most classifier trainning cases

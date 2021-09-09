@@ -9,6 +9,7 @@ from scipy.fftpack.realtransforms import dct
 
 eps = 0.00000001
 
+
 def zero_crossing_rate(frame):
     """Computes zero crossing rate of frame
     """
@@ -139,6 +140,7 @@ def spectral_rolloff(signal, c):
 
     return sp_rolloff
 
+
 def mfcc_filter_banks(sampling_rate, num_fft, lowfreq=133.33, linc=200 / 3,
                       logsc=1.0711703, num_lin_filt=13, num_log_filt=27):
     """Computes the triangular filterbank for MFCC computation
@@ -265,7 +267,9 @@ def chroma_features(signal, sampling_rate, num_fft):
 
     return chroma_names, final_matrix
 
+
 """ Windowing and feature extraction """
+
 
 def feature_extraction(signal, sampling_rate, window, step, deltas=True):
     """This function implements the shor-term windowing process.

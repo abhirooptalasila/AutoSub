@@ -18,6 +18,7 @@ from writeToFile import write_to_file
 # Line count for SRT file
 line_count = 1
 
+
 def sort_alphanumeric(data):
     """Sort function to sort os.listdir() alphanumerically
     Helps to process audio files sequentially after splitting
@@ -29,7 +30,7 @@ def sort_alphanumeric(data):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
 
-    return sorted(data, key = alphanum_key)
+    return sorted(data, key=alphanum_key)
 
 
 def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
@@ -81,13 +82,14 @@ def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
             cues += [float(limits[0]) + token.start_time]
         # time duration is exceeded and at the next word boundary
         needs_split = ((token.start_time - previous_end_time) > split_duration) and token.text == " "
-        is_final_character = current_token_index+1 == num_tokens
+        is_final_character = current_token_index + 1 == num_tokens
         # Write out the line
         if needs_split or is_final_character:
             # Determine the timestamps
             split_limits = [float(limits[0]) + previous_end_time, float(limits[0]) + token.start_time]
             # Convert character list to string. Upper bound has plus 1 as python list slices are [inclusive, exclusive]
-            split_inferred_text = ''.join([x.text for x in metadata.transcripts[0].tokens[split_start_index:current_token_index+1]])
+            split_inferred_text = ''.join(
+                [x.text for x in metadata.transcripts[0].tokens[split_start_index:current_token_index + 1]])
             write_to_file(output_file_handle_dict, split_inferred_text, line_count, split_limits, cues)
             # Reset and update indexes for the next subtitle split
             previous_end_time = token.start_time
@@ -130,8 +132,11 @@ def main():
     parser.add_argument('--file', required=True,
                         help='Input video file')
     parser.add_argument('--format', choices=supported_output_formats, nargs='+',
-                        help='Create only certain output formats rather than all formats', default=supported_output_formats)
-    parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
+                        help='Create only certain output formats rather than all formats',
+                        default=supported_output_formats)
+    parser.add_argument('--split-duration', type=float,
+                        help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles',
+                        default=5)
     args = parser.parse_args()
 
     if os.path.isfile(args.file):
