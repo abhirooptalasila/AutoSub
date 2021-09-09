@@ -101,15 +101,7 @@ def ds_process_audio(ds, audio_file, file_handle, vtt, split_duration):
 def main():
     global line_count
     print("AutoSub\n")
-        
-    parser = argparse.ArgumentParser(description="AutoSub")
-    parser.add_argument('--file', required=True,
-                        help='Input video file')
-    parser.add_argument('--vtt', dest="vtt", action="store_true",
-                        help='Output a vtt file with cue points for individual words instead of a srt file')
-    parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
-    args = parser.parse_args()
-    
+
     for x in os.listdir():
         if x.endswith(".pbmm"):
             print("Model: ", os.path.join(os.getcwd(), x))
@@ -130,6 +122,15 @@ def main():
     except:
         print("Invalid scorer file. Running inference using only model file\n")
 
+
+    parser = argparse.ArgumentParser(description="AutoSub")
+    parser.add_argument('--file', required=True,
+                        help='Input video file')
+    parser.add_argument('--vtt', dest="vtt", action="store_true",
+                        help='Output a vtt file with cue points for individual words instead of a srt file')
+    parser.add_argument('--split-duration', type=float, help='Split run-on sentences exceededing this duration (in seconds) into multiple subtitles', default=5)
+    args = parser.parse_args()
+
     if os.path.isfile(args.file):
         input_file = args.file
         print("\nInput file:", input_file)
@@ -142,13 +143,25 @@ def main():
     audio_directory = os.path.join(base_directory, "audio")
     video_file_name = input_file.split(os.sep)[-1].split(".")[0]
     audio_file_name = os.path.join(audio_directory, video_file_name + ".wav")
-    srt_file_name = os.path.join(output_directory, video_file_name + ".srt")
     srt_extension = ".srt" if not args.vtt else ".vtt"
     srt_file_name = os.path.join(output_directory, video_file_name + srt_extension)
+    
+    if os.path.exists(srt_file_name):
+        try:
+            os.remove(srt_file_name)
+        except Exception as e:
+            print('ERROR: %s exists and it cannot be deleted. REASON: %s. Please rectify before re-running.' % (srt_file_name, e))
 
     # Clean audio/ directory 
-    shutil.rmtree(audio_directory)
-    os.mkdir(audio_directory)
+    for filename in os.listdir(audio_directory):
+        file_path = os.path.join(audio_directory, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     # Extract audio from input video file
     extract_audio(input_file, audio_file_name)
