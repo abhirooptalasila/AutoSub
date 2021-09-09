@@ -10,7 +10,7 @@ import argparse
 import subprocess
 import numpy as np
 from tqdm import tqdm
-from deepspeech import Model, version 
+from deepspeech import Model, version
 from segmentAudio import silenceRemoval
 from audioProcessing import extract_audio, convert_samplerate
 from writeToFile import write_to_file
@@ -20,15 +20,15 @@ line_count = 1
 
 def sort_alphanumeric(data):
     """Sort function to sort os.listdir() alphanumerically
-    Helps to process audio files sequentially after splitting 
+    Helps to process audio files sequentially after splitting
 
     Args:
         data : file name
     """
-    
+
     convert = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)] 
-    
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+
     return sorted(data, key = alphanum_key)
 
 
@@ -42,12 +42,12 @@ def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
         output_file_handle_dict : Mapping of subtitle format (eg, 'srt') to open file_handle
         split_duration: for long audio segments, split the subtitle based on this number of seconds
     """
-    
+
     global line_count
     fin = wave.open(audio_file, 'rb')
     fs_orig = fin.getframerate()
     desired_sample_rate = ds.sampleRate()
-    
+
     # Check if sampling rate is required rate (16000)
     # won't be carried out as FFmpeg already converts to 16kHz
     if fs_orig != desired_sample_rate:
@@ -58,7 +58,7 @@ def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
         audio = np.frombuffer(fin.readframes(fin.getnframes()), np.int16)
 
     fin.close()
-    
+
     # Perform inference on audio segment
     metadata = ds.sttWithMetadata(audio)
 
@@ -113,13 +113,13 @@ def main():
             print("Scorer: ", os.path.join(os.getcwd(), x))
             ds_scorer = os.path.join(os.getcwd(), x)
 
-    # Load DeepSpeech model 
+    # Load DeepSpeech model
     try:
         ds = Model(ds_model)
     except:
         print("Invalid model file. Exiting\n")
         sys.exit(1)
-    
+
     try:
         ds.enableExternalScorer(ds_scorer)
     except:
@@ -140,7 +140,7 @@ def main():
     else:
         print(args.file, ": No such file exists")
         sys.exit(1)
-    
+
     base_directory = os.getcwd()
     output_directory = os.path.join(base_directory, "output")
     audio_directory = os.path.join(base_directory, "audio")
@@ -170,15 +170,15 @@ def main():
 
     # Extract audio from input video file
     extract_audio(input_file, audio_file_name)
-    
+
     print("Splitting on silent parts in audio file")
     silenceRemoval(audio_file_name)
 
     print("\nRunning inference:")
-    
+
     for file in tqdm(sort_alphanumeric(os.listdir(audio_directory))):
         audio_segment_path = os.path.join(audio_directory, file)
-        
+
         # Dont run inference on the original audio file
         if audio_segment_path.split(os.sep)[-1] != audio_file_name.split(os.sep)[-1]:
             ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)

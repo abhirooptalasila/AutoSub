@@ -28,7 +28,7 @@ def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cu
     Args:
         output_file_handle_dict : Mapping of subtitle format (eg, 'srt') to open file_handle
         inferred_text : text to be written
-        line_count : subtitle line count 
+        line_count : subtitle line count
         limits : starting and ending times for text
     """
 
