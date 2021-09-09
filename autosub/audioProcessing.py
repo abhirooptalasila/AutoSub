@@ -13,9 +13,10 @@ def extract_audio(input_file, audio_file_name):
         input_file: input video file
         audio_file_name: save audio WAV file with same filename as video file
     """
-    
+
     try:
-        command = ["ffmpeg", "-hide_banner", "-loglevel", "warning", "-i", input_file, "-ac", "1", "-ar", "16000", "-vn", "-f", "wav", audio_file_name]
+        command = ["ffmpeg", "-hide_banner", "-loglevel", "warning", "-i", input_file, "-ac", "1", "-ar", "16000",
+                   "-vn", "-f", "wav", audio_file_name]
         ret = subprocess.call(command)
         print("Extracted audio to audio/{}".format(audio_file_name.split("/")[-1]))
     except Exception as e:
@@ -26,15 +27,15 @@ def extract_audio(input_file, audio_file_name):
 def convert_samplerate(audio_path, desired_sample_rate):
     """Convert extracted audio to the format expected by DeepSpeech
     ***WONT be called as extract_audio() converts the audio to 16kHz while saving***
-    
+
     Args:
         audio_path: audio file path
-        desired_sample_rate: DeepSpeech expects 16kHz 
+        desired_sample_rate: DeepSpeech expects 16kHz
 
     Returns:
         numpy buffer: audio signal stored in numpy array
     """
-    
+
     sox_cmd = "sox {} --type raw --bits 16 --channels 1 --rate {} --encoding signed-integer \
         --endian little --compression 0.0 --no-dither norm -3.0 - ".format(
         quote(audio_path), desired_sample_rate)

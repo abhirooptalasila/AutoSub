@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import math
 import numpy as np
 from scipy.fftpack import fft
-from scipy.signal import lfilter
 from scipy.fftpack.realtransforms import dct
 
 eps = 0.00000001
 
+
 def zero_crossing_rate(frame):
     """Computes zero crossing rate of frame
     """
-    
+
     count = len(frame)
     count_zero = np.sum(np.abs(np.diff(np.sign(frame)))) / 2
     return np.float64(count_zero) / np.float64(count - 1.0)
@@ -21,14 +20,14 @@ def zero_crossing_rate(frame):
 def energy(frame):
     """Computes signal energy of frame
     """
-    
+
     return np.sum(frame ** 2) / np.float64(len(frame))
 
 
 def energy_entropy(frame, n_short_blocks=10):
     """Computes entropy of energy
     """
-    
+
     # total frame energy
     frame_energy = np.sum(frame ** 2)
     frame_length = len(frame)
@@ -44,7 +43,7 @@ def energy_entropy(frame, n_short_blocks=10):
 
     # Compute entropy of the normalized sub-frame energies:
     entropy = -np.sum(s * np.log2(s + eps))
-    
+
     return entropy
 
 
@@ -54,7 +53,7 @@ def energy_entropy(frame, n_short_blocks=10):
 def spectral_centroid_spread(fft_magnitude, sampling_rate):
     """Computes spectral centroid of frame (given abs(FFT))
     """
-    
+
     ind = (np.arange(1, len(fft_magnitude) + 1)) * \
           (sampling_rate / (2.0 * len(fft_magnitude)))
 
@@ -79,7 +78,7 @@ def spectral_centroid_spread(fft_magnitude, sampling_rate):
 def spectral_entropy(signal, n_short_blocks=10):
     """Computes the spectral entropy
     """
-    
+
     # number of frame samples
     num_frames = len(signal)
 
@@ -105,12 +104,12 @@ def spectral_entropy(signal, n_short_blocks=10):
 
 def spectral_flux(fft_magnitude, previous_fft_magnitude):
     """Computes the spectral flux feature of the current frame
-    
+
     Args:
         fft_magnitude : the abs(fft) of the current frame
         previous_fft_magnitude : the abs(fft) of the previous frame
     """
-    
+
     # compute the spectral flux as the sum of square distances:
     fft_sum = np.sum(fft_magnitude + eps)
     previous_fft_sum = np.sum(previous_fft_magnitude + eps)
@@ -124,11 +123,11 @@ def spectral_flux(fft_magnitude, previous_fft_magnitude):
 def spectral_rolloff(signal, c):
     """Computes spectral roll-off
     """
-    
+
     energy = np.sum(signal ** 2)
     fft_length = len(signal)
     threshold = c * energy
-    # Ffind the spectral rolloff as the frequency position 
+    # Ffind the spectral rolloff as the frequency position
     # where the respective spectral energy is equal to c*totalEnergy
     cumulative_sum = np.cumsum(signal ** 2) + eps
     a = np.nonzero(cumulative_sum > threshold)[0]
@@ -136,12 +135,13 @@ def spectral_rolloff(signal, c):
         sp_rolloff = np.float64(a[0]) / (float(fft_length))
     else:
         sp_rolloff = 0.0
-        
+
     return sp_rolloff
+
 
 def mfcc_filter_banks(sampling_rate, num_fft, lowfreq=133.33, linc=200 / 3,
                       logsc=1.0711703, num_lin_filt=13, num_log_filt=27):
-    """Computes the triangular filterbank for MFCC computation 
+    """Computes the triangular filterbank for MFCC computation
     (used in the stFeatureExtraction function before the stMFCC function call)
     This function is taken from the scikits.talkbox library (MIT Licence):
     https://pypi.python.org/pypi/scikits.talkbox
@@ -189,13 +189,13 @@ def mfcc(fft_magnitude, fbank, num_mfcc_feats):
     Args:
         fft_magnitude : fft magnitude abs(FFT)
         fbank : filter bank (see mfccInitFilterBanks)
-    
+
     Returns:
         ceps : MFCCs (13 element vector)
 
-    Note:    MFCC calculation is, in general, taken from the 
+    Note:    MFCC calculation is, in general, taken from the
              scikits.talkbox library (MIT Licence),
-    #    with a small number of modifications to make it more 
+    #    with a small number of modifications to make it more
          compact and suitable for the pyAudioAnalysis Lib
     """
 
@@ -208,7 +208,7 @@ def chroma_features_init(num_fft, sampling_rate):
     """This function initializes the chroma matrices used in the calculation
     of the chroma features
     """
-    
+
     freqs = np.array([((f + 1) * sampling_rate) /
                       (2 * num_fft) for f in range(num_fft)])
     cp = 27.50
@@ -265,7 +265,9 @@ def chroma_features(signal, sampling_rate, num_fft):
 
     return chroma_names, final_matrix
 
+
 """ Windowing and feature extraction """
+
 
 def feature_extraction(signal, sampling_rate, window, step, deltas=True):
     """This function implements the shor-term windowing process.
@@ -278,11 +280,11 @@ def feature_extraction(signal, sampling_rate, window, step, deltas=True):
         window : the short-term window size (in samples)
         step : the short-term window step (in samples)
         deltas : (opt) True/False if delta features are to be computed
-        
+
     Returns:
-        features (numpy.ndarray) : contains features 
+        features (numpy.ndarray) : contains features
                                 (n_feats x numOfShortTermWindows)
-        feature_names (numpy.ndarray) : contains feature names 
+        feature_names (numpy.ndarray) : contains feature names
                                 (n_feats x numOfShortTermWindows)
     """
 
@@ -409,5 +411,5 @@ def feature_extraction(signal, sampling_rate, window, step, deltas=True):
         fft_magnitude_previous = fft_magnitude.copy()
 
     features = np.concatenate(features, 1)
-    
+
     return features, feature_names

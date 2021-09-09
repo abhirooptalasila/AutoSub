@@ -12,7 +12,7 @@ import trainAudio as TA
 def read_audio_file(input_file):
     """This function returns a numpy array that stores the audio samples of a
     specified WAV file
-    
+
     Args:
         input_file : audio from input video file
     """
@@ -41,6 +41,7 @@ def read_audio_file(input_file):
 
     return sampling_rate, signal
 
+
 def smooth_moving_avg(signal, window=11):
     window = int(window)
     if signal.ndim != 1:
@@ -52,13 +53,14 @@ def smooth_moving_avg(signal, window=11):
     s = np.r_[2 * signal[0] - signal[window - 1::-1],
               signal, 2 * signal[-1] - signal[-1:-window:-1]]
     w = np.ones(window, 'd')
-    y = np.convolve(w/w.sum(), s, mode='same')
-    
+    y = np.convolve(w / w.sum(), s, mode='same')
+
     return y[window:-window + 1]
+
 
 def stereo_to_mono(signal):
     """This function converts the input signal to MONO (if it is STEREO)
-    
+
     Args:
         signal: audio file stored in a Numpy array
     """
@@ -69,13 +71,14 @@ def stereo_to_mono(signal):
         else:
             if signal.shape[1] == 2:
                 signal = (signal[:, 1] / 2) + (signal[:, 0] / 2)
-                
+
     return signal
+
 
 def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
                     weight=0.5):
     """Event Detection (silence removal)
-    
+
     Args:
         signal : the input audio signal
         sampling_rate : sampling freq
@@ -83,10 +86,10 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
         smoothWindow : (optinal) smooth window (in seconds)
         weight : (optinal) weight factor (0 < weight < 1) the higher, the more strict
         plot : (optinal) True if results are to be plotted
-        
+
     Returns:
-        seg_limits : list of segment limits in seconds (e.g [[0.1, 0.9], 
-                [1.4, 3.0]] means that the resulting segments 
+        seg_limits : list of segment limits in seconds (e.g [[0.1, 0.9],
+                [1.4, 3.0]] means that the resulting segments
                 are (0.1 - 0.9) seconds and (1.4, 3.0) seconds
     """
 
@@ -98,8 +101,8 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
     # Step 1: feature extraction
     signal = stereo_to_mono(signal)
     st_feats, _ = FE.feature_extraction(signal, sampling_rate,
-                                         st_win * sampling_rate,
-                                         st_step * sampling_rate)
+                                        st_win * sampling_rate,
+                                        st_step * sampling_rate)
 
     # Step 2: train binary svm classifier of low vs high energy frames
     # keep only the energy short-term sequence (2nd feature)
@@ -147,7 +150,7 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
     # of top 10% and lower 10% of the values
     nt = int(prog_on_set_sort.shape[0] / 10)
     threshold = (np.mean((1 - weight) * prog_on_set_sort[0:nt]) +
-         weight * np.mean(prog_on_set_sort[-nt::]))
+                 weight * np.mean(prog_on_set_sort[-nt::]))
 
     max_indices = np.where(prob_on_set > threshold)[0]
     # get the indices of the frames that satisfy the thresholding
@@ -159,12 +162,12 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
     while index < len(max_indices):
         # for each of the detected onset indices
         cur_cluster = [max_indices[index]]
-        if index == len(max_indices)-1:
+        if index == len(max_indices) - 1:
             break
-        while max_indices[index+1] - cur_cluster[-1] <= 2:
-            cur_cluster.append(max_indices[index+1])
+        while max_indices[index + 1] - cur_cluster[-1] <= 2:
+            cur_cluster.append(max_indices[index + 1])
             index += 1
-            if index == len(max_indices)-1:
+            if index == len(max_indices) - 1:
                 break
         index += 1
         time_clusters.append(cur_cluster)
@@ -181,7 +184,8 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
 
     return seg_limits
 
-def silenceRemoval(input_file, smoothing_window = 1.0, weight = 0.2):
+
+def silenceRemoval(input_file, smoothing_window=1.0, weight=0.2):
     """Remove silence segments from an audio file and split on those segments
 
     Args:
@@ -189,16 +193,16 @@ def silenceRemoval(input_file, smoothing_window = 1.0, weight = 0.2):
         smoothing : Smoothing window size in seconds. Defaults to 1.0.
         weight : Weight factor in (0,1). Defaults to 0.5.
     """
-    
+
     if not os.path.isfile(input_file):
         raise Exception("Input audio file not found!")
 
     [fs, x] = read_audio_file(input_file)
     segmentLimits = silence_removal(x, fs, 0.05, 0.05, smoothing_window, weight)
-    
+
     for i, s in enumerate(segmentLimits):
         strOut = "{0:s}_{1:.3f}-{2:.3f}.wav".format(input_file[0:-4], s[0], s[1])
         wavfile.write(strOut, fs, x[int(fs * s[0]):int(fs * s[1])])
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    silenceRemoval("video.wav")
