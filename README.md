@@ -12,7 +12,7 @@
 
 ## About
 
-AutoSub is a CLI application to generate subtitle files (.srt, .vtt) for any video file using [Mozilla DeepSpeech](https://github.com/mozilla/DeepSpeech). I use the DeepSpeech Python API to run inference on audio segments and [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis) to split the initial audio on silent segments, producing multiple small files.
+AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt transcript) for any video file using [Mozilla DeepSpeech](https://github.com/mozilla/DeepSpeech). I use the DeepSpeech Python API to run inference on audio segments and [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis) to split the initial audio on silent segments, producing multiple small files.
 
 ⭐ Featured in [DeepSpeech Examples](https://github.com/mozilla/DeepSpeech-examples) by Mozilla
 
@@ -101,7 +101,7 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     ```
 * By default, AutoSub outputs in a number of formats. To only produce the file formats you want use the `--format` argument:
     ```bash
-    $ python3 autosub/main.py --file ~/movie.mp4 --format srt
+    $ python3 autosub/main.py --file ~/movie.mp4 --format srt txt
     ```
 
 

@@ -49,3 +49,5 @@ def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cu
             cue_tags = [f"<{str(datetime.timedelta(seconds=cue))}>" for cue in cues]
             words_cues_mixed = [val for pair in zip(cue_tags, words) for val in pair][1:]
             file_handle.write(''.join(words_cues_mixed) + "\n\n")
+        elif format == 'txt':
+            file_handle.write(inferred_text + ". ")

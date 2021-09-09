@@ -96,6 +96,10 @@ def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
             line_count += 1
         current_token_index += 1
 
+    # For the text transcript output, after each audio segment write newlines for readability.
+    if 'txt' in output_file_handle_dict.keys():
+        output_file_handle_dict['txt'].write("\n\n")
+
 
 def main():
     global line_count
@@ -121,7 +125,7 @@ def main():
     except:
         print("Invalid scorer file. Running inference using only model file\n")
 
-    supported_output_formats = ['srt', 'vtt']
+    supported_output_formats = ['srt', 'vtt', 'txt']
     parser = argparse.ArgumentParser(description="AutoSub")
     parser.add_argument('--file', required=True,
                         help='Input video file')
