@@ -183,11 +183,22 @@ def main():
 
     print("\nRunning inference:")
 
-    for filename in tqdm(sort_alphanumeric(os.listdir(audio_directory))):
-        # Only run inference on relevant files, and don't run inference on the original audio file
-        if filename.startswith(video_prefix) and (filename != os.path.basename(audio_file_name)):
-            audio_segment_path = os.path.join(audio_directory, filename)
-            ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)
+    #Remove master audio file
+    audiofiles=sort_alphanumeric(os.listdir(audio_directory))
+    audiofiles.remove(os.path.basename(audio_file_name))
+
+    #Remove non related audiofiles potentially from other instances of autosub
+    audiofiles_ = []
+    for filename in audiofiles:
+        if filename.startswith(video_prefix):
+            audiofiles_.append(filename)
+    audiofiles = audiofiles_
+    del(audiofiles_)
+
+    #Process Segments
+    for filename in tqdm(audiofiles):
+        audio_segment_path = os.path.join(audio_directory, filename)
+        ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)
 
     print("\n")
     for format in output_file_handle_dict:
