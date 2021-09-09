@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import argparse
 import os
 import re
+import shutil
 import sys
 import wave
-import shutil
-import argparse
-import subprocess
+
 import numpy as np
+from deepspeech import Model
 from tqdm import tqdm
-from deepspeech import Model, version
-from segmentAudio import silenceRemoval
+
 from audioProcessing import extract_audio, convert_samplerate
+from segmentAudio import silenceRemoval
 from writeToFile import write_to_file
 
 # Line count for SRT file

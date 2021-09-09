@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import csv
-import sys
-import glob
-import signal
-import ntpath
 import numpy as np
 import sklearn.svm
 

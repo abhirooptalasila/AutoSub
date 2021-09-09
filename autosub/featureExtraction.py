@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import math
 import numpy as np
 from scipy.fftpack import fft
-from scipy.signal import lfilter
 from scipy.fftpack.realtransforms import dct
 
 eps = 0.00000001
