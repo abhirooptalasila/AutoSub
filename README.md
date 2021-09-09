@@ -78,9 +78,13 @@ In the age of OTT platforms, there are still some who prefer to download movies/
     ```
 * After the script finishes, the SRT file is saved in `output/`
 * Open the video file and add this SRT file as a subtitle, or you can just drag and drop in VLC.
+* The optional `--split-duration` argument allows customization of the maximum number of seconds any given subtitle is displayed for. The default is 5 seconds
+    ```bash
+    $ python3 autosub/main.py --file ~/movie.mp4 --split-duration 8
+    ```
 * WEB VTT Output (Credits - [@DerrickGibbs1](https://github.com/DerrickGibbs1)): Output VTT file including cue points for individual words. Nearly identical to VTT file downloaded from YouTube with youtube_dl.
     ```bash
-    $ python3 autosub/main.py --file ~/movie.mp4 -vtt
+    $ python3 autosub/main.py --file ~/movie.mp4 --vtt
     ```
 
 

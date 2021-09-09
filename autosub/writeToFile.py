@@ -18,16 +18,18 @@ def write_to_file(file_handle, inferred_text, line_count, limits, vtt, cues):
     sep = '.' if vtt else ','
     
     d = str(datetime.timedelta(seconds=float(limits[0])))
-    try:
-        from_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:2])
-    except:
-        from_dur = "0" + str(d) + sep + "00"
-        
+
+    # d may be eg, '0:00:14'
+    if '.' in d:
+            from_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:3])
+    else:
+        from_dur = "0" + str(d) + sep + "000"
+
     d = str(datetime.timedelta(seconds=float(limits[1])))
-    try:
-        to_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:2])
-    except:
-        to_dur = "0" + str(d) + sep + "00"
+    if '.' in d:
+        to_dur = "0" + str(d.split(".")[0]) + sep + str(d.split(".")[-1][:3])
+    else:
+        to_dur = "0" + str(d) + sep + "000"
 
     if not vtt:    
         file_handle.write(str(line_count) + "\n")
