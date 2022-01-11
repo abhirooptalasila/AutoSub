@@ -3,10 +3,11 @@
 
 import os
 import numpy as np
-from pydub import AudioSegment
-import scipy.io.wavfile as wavfile
-import featureExtraction as FE
+
 import trainAudio as TA
+from pydub import AudioSegment
+import featureExtraction as FE
+import scipy.io.wavfile as wavfile
 
 
 def read_audio_file(input_file):
@@ -185,8 +186,8 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
     return seg_limits
 
 
-def silenceRemoval(input_file, smoothing_window=1.0, weight=0.2):
-    """Remove silence segments from an audio file and split on those segments
+def remove_silent_segments(input_file, smoothing_window=1.0, weight=0.2):
+    """Remove silent segments from an audio file and split on those segments
 
     Args:
         input_file : audio from input video file
@@ -204,5 +205,3 @@ def silenceRemoval(input_file, smoothing_window=1.0, weight=0.2):
         strOut = "{0:s}_{1:.3f}-{2:.3f}.wav".format(input_file[0:-4], s[0], s[1])
         wavfile.write(strOut, fs, x[int(fs * s[0]):int(fs * s[1])])
 
-# if __name__ == "__main__":
-#    silenceRemoval("video.wav")

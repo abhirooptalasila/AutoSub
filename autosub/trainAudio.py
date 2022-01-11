@@ -4,9 +4,9 @@
 import numpy as np
 import sklearn.svm
 
-shortTermWindow = 0.050
-shortTermStep = 0.050
 eps = 0.00000001
+shortTermStep = 0.050
+shortTermWindow = 0.050
 
 
 def train_svm(features, c_param, kernel='linear'):

@@ -11,6 +11,7 @@ def get_timestamp_string(timedelta, format):
         timedelta : timedelta timestmap
         format : subtitle format
     """
+    
     sep = '.' if format == "vtt" else ','
     # timedelta may be eg, '0:00:14'
     if '.' in str(timedelta):
