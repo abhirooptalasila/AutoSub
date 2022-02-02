@@ -42,7 +42,6 @@ def read_audio_file(input_file):
 
     if signal.ndim == 2 and signal.shape[1] == 1:
         signal = signal.flatten()
-
     return sampling_rate, signal
 
 
@@ -58,7 +57,6 @@ def smooth_moving_avg(signal, window=11):
               signal, 2 * signal[-1] - signal[-1:-window:-1]]
     w = np.ones(window, 'd')
     y = np.convolve(w / w.sum(), s, mode='same')
-
     return y[window:-window + 1]
 
 
@@ -75,7 +73,6 @@ def stereo_to_mono(signal):
         else:
             if signal.shape[1] == 2:
                 signal = (signal[:, 1] / 2) + (signal[:, 0] / 2)
-
     return signal
 
 
@@ -185,7 +182,6 @@ def silence_removal(signal, sampling_rate, st_win, st_step, smooth_window=0.5,
         if s_lim[1] - s_lim[0] > min_duration:
             seg_limits_2.append(s_lim)
     seg_limits = seg_limits_2
-
     return seg_limits
 
 

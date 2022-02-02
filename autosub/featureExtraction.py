@@ -43,7 +43,6 @@ def energy_entropy(frame, n_short_blocks=10):
 
     # Compute entropy of the normalized sub-frame energies:
     entropy = -np.sum(s * np.log2(s + eps))
-
     return entropy
 
 
@@ -71,7 +70,6 @@ def spectral_centroid_spread(fft_magnitude, sampling_rate):
     # Normalize:
     centroid = centroid / (sampling_rate / 2.0)
     spread = spread / (sampling_rate / 2.0)
-
     return centroid, spread
 
 
@@ -98,7 +96,6 @@ def spectral_entropy(signal, n_short_blocks=10):
 
     # compute spectral entropy
     entropy = -np.sum(s * np.log2(s + eps))
-
     return entropy
 
 
@@ -116,7 +113,6 @@ def spectral_flux(fft_magnitude, previous_fft_magnitude):
     sp_flux = np.sum(
         (fft_magnitude / fft_sum - previous_fft_magnitude /
          previous_fft_sum) ** 2)
-
     return sp_flux
 
 
@@ -135,7 +131,6 @@ def spectral_rolloff(signal, c):
         sp_rolloff = np.float64(a[0]) / (float(fft_length))
     else:
         sp_rolloff = 0.0
-
     return sp_rolloff
 
 
@@ -220,7 +215,6 @@ def chroma_features_init(num_fft, sampling_rate):
     for u in unique_chroma:
         idx = np.nonzero(num_chroma == u)
         num_freqs_per_chroma[idx] = idx[0].shape
-
     return num_chroma, num_freqs_per_chroma
 
 
@@ -262,7 +256,6 @@ def chroma_features(signal, sampling_rate, num_fft):
     #    ax.set_yticklabels(xaxis)
     #    plt.show(block=False)
     #    plt.draw()
-
     return chroma_names, final_matrix
 
 
@@ -411,5 +404,4 @@ def feature_extraction(signal, sampling_rate, window, step, deltas=True):
         fft_magnitude_previous = fft_magnitude.copy()
 
     features = np.concatenate(features, 1)
-
     return features, feature_names

@@ -21,6 +21,7 @@ _logger = logger.setup_applevel_logger(__name__)
 # Line count for SRT file
 line_count = 1
 
+
 def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
     """sttWithMetadata() will run DeepSpeech inference on each audio file 
     generated after remove_silent_segments. These files contain start and end 
@@ -80,17 +81,19 @@ def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
 def main():
     global line_count
     supported_output_formats = ["srt", "vtt", "txt"]
+    supported_engines = ["ds", "stt"]
 
     parser = argparse.ArgumentParser(description="AutoSub")
     parser.add_argument("--format", choices=supported_output_formats, nargs="+",
                         help="Create only certain output formats rather than all formats",
                         default=supported_output_formats)
-    parser.add_argument("--split-duration", dest="split_duration", type=float,
-                        help="Split run-on sentences exceededing this duration (in seconds) into multiple subtitles",
-                        default=5)
+    parser.add_argument("--split-duration", dest="split_duration", type=float, default=5,
+                        help="Split run-on sentences exceededing this duration (in seconds) into multiple subtitles")
     parser.add_argument("--dry-run", dest="dry_run", action="store_true",
                         help="Perform dry-run to verify options prior to running. Also useful to instantiate \
                             cuda/tensorflow cache prior to running multiple times")
+    parser.add_argument("--engine", choices=supported_engines, nargs="?", default="stt",
+                        help="Select either DeepSpeech or Coqui STT for inference. Latter is default")
     parser.add_argument("--file", required=False, help="Input video file")
     parser.add_argument("--model", required=False, help="Input *.pbmm model file")
     parser.add_argument("--scorer", required=False, help="Input *.scorer file")
@@ -104,7 +107,7 @@ def main():
     ds_scorer = get_model(args, "scorer")
 
     if args.dry_run:
-        create_model(ds_model, ds_scorer) 
+        create_model(args.engine, ds_model, ds_scorer) 
         if args.file is not None:
             if not os.path.isfile(args.file):
                 _logger.warn(f"Invalid file: {args.file}")
@@ -151,7 +154,7 @@ def main():
     audiofiles.remove(os.path.basename(audio_file_name))
 
     _logger.info("Running inference...")
-    ds = create_model(ds_model, ds_scorer) 
+    ds = create_model(args.engine, ds_model, ds_scorer) 
 
     for filename in tqdm(audiofiles):
         audio_segment_path = os.path.join(audio_directory, filename)

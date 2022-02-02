@@ -35,7 +35,6 @@ def train_svm(features, c_param, kernel='linear'):
     svm = sklearn.svm.SVC(C=c_param, kernel=kernel, probability=True,
                           gamma='auto')
     svm.fit(feature_matrix, labels)
-
     return svm
 
 
@@ -95,5 +94,4 @@ def features_to_matrix(features):
         else:
             feature_matrix = np.vstack((feature_matrix, f))
             labels = np.append(labels, i * np.ones((len(f), 1)))
-
     return feature_matrix, labels

@@ -12,7 +12,7 @@
 
 ## About
 
-AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt transcript) for any video file using [Mozilla DeepSpeech](https://github.com/mozilla/DeepSpeech). I use the DeepSpeech Python API to run inference on audio segments and [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis) to split the initial audio on silent segments, producing multiple small files.
+AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt transcript) for any video file using either [Mozilla DeepSpeech](https://github.com/mozilla/DeepSpeech) or [Coqui STT](https://github.com/coqui-ai/STT). I use their open-source models to run inference on audio segments and [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis) to split the initial audio on silent segments, producing multiple smaller files (makes inference easy).
 
 ⭐ Featured in [DeepSpeech Examples](https://github.com/mozilla/DeepSpeech-examples) by Mozilla
 
@@ -35,15 +35,16 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
     OR
     $ pip3 install -r requirements-gpu.txt
     ```
-* Use `getmodels.sh` to download the model and scorer files with the version number as argument
-    ```bash
-    $ ./getmodels.sh 0.9.3
-    ```
 * Install FFMPEG. If you're on Ubuntu, this should work fine
     ```bash
     $ sudo apt-get install ffmpeg
     $ ffmpeg -version               # I'm running 4.1.4
     ```
+* By default, if no model files are found in the root directory, the script will download v0.9.3 models for DeepSpeech or TFLITE model and Huge Vocab for Coqui. Use `getmodels.sh` to download DeepSpeech model and scorer files with the version number as argument. For Coqui, download from [here](https://coqui.ai/models)
+    ```bash
+    $ ./getmodels.sh 0.9.3
+    ```
+* For .tflite models with DeepSpeech, follow [this](https://github.com/abhirooptalasila/AutoSub/issues/41#issuecomment-968847604)
 
 
 ## Docker
@@ -72,7 +73,9 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
 
 ## How-to example
 
-* The model files should be in the repo root directory and will be loaded automatically. But incase you have multiple versions, use the `--model` and `--scorer` args while executing
+* The model files should be in the repo root directory and will be loaded/downloaded automatically. Incase you have multiple versions, use the `--model` and `--scorer` args while executing
+* By default, Coqui is used for inference. You can change this by using the `--engine` argument with value `"ds"` for DeepSpeech
+* For languages other than English, you'll need to manually download the model and scorer files. Check [here](https://discourse.mozilla.org/t/links-to-pretrained-models/62688) for DeepSpeech and [here](https://coqui.ai/models) for Coqui.
 * After following the installation instructions, you can run `autosub/main.py` as given below. The `--file` argument is the video file for which subtitles are to be generated
     ```bash
     $ python3 autosub/main.py --file ~/movie.mp4

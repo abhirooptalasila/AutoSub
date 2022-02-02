@@ -2,19 +2,26 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import shlex
 import logger
 import subprocess
 import numpy as np
 from os.path import basename
 
+try:
+    from shlex import quote
+except ImportError:
+    from pipes import quote
+
 _logger = logger.setup_applevel_logger(__name__)
+
 
 def extract_audio(input_file, audio_file_name):
     """Extract audio from input video file and save to audio/ in root dir
 
     Args:
-        input_file: input video file
-        audio_file_name: save audio WAV file with same filename as video file
+        input_file : input video file
+        audio_file_name : save audio WAV file with same filename as video file
     """
 
     try:
@@ -32,11 +39,11 @@ def convert_samplerate(audio_path, desired_sample_rate):
     ***WONT be called as extract_audio() converts the audio to 16kHz while saving***
 
     Args:
-        audio_path: audio file path
-        desired_sample_rate: DeepSpeech expects 16kHz
+        audio_path : audio file path
+        desired_sample_rate : DeepSpeech expects 16kHz
 
     Returns:
-        numpy buffer: audio signal stored in numpy array
+        numpy buffer : audio signal stored in numpy array
     """
 
     sox_cmd = "sox {} --type raw --bits 16 --channels 1 --rate {} --encoding signed-integer \
@@ -46,9 +53,7 @@ def convert_samplerate(audio_path, desired_sample_rate):
         output = subprocess.check_output(
             shlex.split(sox_cmd), stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as e:
-        raise RuntimeError("SoX returned non-zero status: {}".format(e.stderr))
+        raise RuntimeError(f"SoX returned non-zero status: {e.stderr}")
     except OSError as e:
-        raise OSError(e.errno, "SoX not found, use {}hz files or install it: {}".format(
-            desired_sample_rate, e.strerror))
-
+        raise OSError(e.errno, f"SoX not found, use {desired_sample_rate}hz files or install it: {e.strerror}")
     return np.frombuffer(output, np.int16)
