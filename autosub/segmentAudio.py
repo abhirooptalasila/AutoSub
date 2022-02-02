@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import os
+import logger
 import numpy as np
 
 import trainAudio as TA
 from pydub import AudioSegment
 import featureExtraction as FE
 import scipy.io.wavfile as wavfile
+
+_logger = logger.setup_applevel_logger(__name__)
 
 
 def read_audio_file(input_file):
@@ -35,7 +38,7 @@ def read_audio_file(input_file):
                 temp_signal.append(data[chn::audiofile.channels])
             signal = np.array(temp_signal).T
     except:
-        print("Error: file not found or other I/O error. (DECODING FAILED)")
+        _logger.error("File not found or other I/O error. (DECODING FAILED)")
 
     if signal.ndim == 2 and signal.shape[1] == 1:
         signal = signal.flatten()

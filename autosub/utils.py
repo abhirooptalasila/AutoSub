@@ -5,7 +5,10 @@ import re
 import os
 import sys
 import shutil
+import logger
 from deepspeech import Model
+
+_logger = logger.setup_applevel_logger(__name__)
 
 def sort_alphanumeric(data):
     """Sort function to sort os.listdir() alphanumerically
@@ -35,7 +38,7 @@ def clean_folder(folder):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print(f"Failed to delete {file_path}. Reason: {e}")
+            _logger.warn(f"Failed to delete {file_path}. Reason: {e}")
 
 def get_model(args, arg_name):
     """Will prioritze supplied arguments but if not, try to find files
@@ -55,31 +58,31 @@ def get_model(args, arg_name):
     if arg is not None:
         model = os.path.abspath(arg)
         if not os.path.isfile(model):
-            print(f"Error. Supplied file {arg} doesn't exist. Please supply a valid {arg_name} file via the --{arg_name} flag.")
+            _logger.error(f"Supplied file {arg} doesn't exist. Please supply a valid {arg_name} file via the --{arg_name} flag")
             sys.exit(1)
     else:
         models = [file for file in os.listdir() if file.endswith(arg_extension)]
         num_models = len(models)
     
         if num_models == 0:
-            print(f"Warning no {arg_name}s specified via --{arg_name} and none found in local directory. Please run getmodel.sh to get some.")
+            _logger.warn(f"No {arg_name}s specified via --{arg_name} and none found in local directory. Please run getmodel.sh to get some")
             if arg_name == 'model':
-                print("Error: Must have pbmm model. Exiting")
+                _logger.error("Must specify pbmm model")
                 sys.exit(1)
             else:
                 model = ''
         elif num_models != 1: 
-            print(f"Warning. Detected {num_models} {arg_name} files in local dir")
+            _logger.warn(f"Detected {num_models} {arg_name} files in local dir")
             if arg_name == 'model':
-                print("Must specify pbmm model. Exiting")
+                _logger.error("Must specify pbmm model")
                 sys.exit(1)
             else:
-                print("Please specify scorer using --scorer")
+                _logger.warn("Please specify scorer using --scorer")
                 model = ''
         else:
             model = os.path.abspath(models[0])                    
     
-    print(f"{arg_name.capitalize()}: {model}")
+    _logger.info(f"{arg_name.capitalize()}: {model}")
     return(model)
 
 def create_model(model, scorer):
@@ -93,11 +96,11 @@ def create_model(model, scorer):
     try:
         ds = Model(model)
     except:
-        print("Invalid model file. Exiting")
+        _logger.error("Invalid model file")
         sys.exit(1)
 
     try:
         ds.enableExternalScorer(scorer)
     except:
-        print("Invalid scorer file. Running inference using only model file")
+        _logger.warn("Invalid scorer file. Running inference using only model file")
     return(ds)

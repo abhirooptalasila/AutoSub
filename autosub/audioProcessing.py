@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import logger
 import subprocess
 import numpy as np
 from os.path import basename
+
+_logger = logger.setup_applevel_logger(__name__)
 
 def extract_audio(input_file, audio_file_name):
     """Extract audio from input video file and save to audio/ in root dir
@@ -18,9 +21,9 @@ def extract_audio(input_file, audio_file_name):
         command = ["ffmpeg", "-hide_banner", "-loglevel", "warning", "-i", input_file, "-ac", "1", "-ar", "16000",
                    "-vn", "-f", "wav", audio_file_name]
         ret = subprocess.run(command).returncode
-        print("Extracted audio to audio/{}".format(basename(audio_file_name)))
+        _logger.info(f"Extracted audio to audio/{basename(audio_file_name)}")
     except Exception as e:
-        print("Error: ", str(e))
+        _logger.error(str(e))
         sys.exit(1)
 
 

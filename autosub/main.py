@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import wave
+import logger
 import argparse
 
 import numpy as np
@@ -15,6 +16,7 @@ from writeToFile import write_to_file
 from audioProcessing import extract_audio
 from segmentAudio import remove_silent_segments
 
+_logger = logger.setup_applevel_logger(__name__)
 
 # Line count for SRT file
 line_count = 1
@@ -96,7 +98,7 @@ def main():
     args = parser.parse_args()
     
     #print(sys.argv[0:])
-    print("ARGS:", args)
+    _logger.info(f"ARGS: {args}")
 
     ds_model = get_model(args, "model")
     ds_scorer = get_model(args, "scorer")
@@ -105,18 +107,18 @@ def main():
         create_model(ds_model, ds_scorer) 
         if args.file is not None:
             if not os.path.isfile(args.file):
-                print(f"Invalid file: {args.file}")
+                _logger.warn(f"Invalid file: {args.file}")
         sys.exit(0)
 
     if args.file is not None:
         if os.path.isfile(args.file):
             input_file = args.file
-            print(f"Input file: {args.file}")
+            _logger.info(f"Input file: {args.file}")
         else:
-            print(f"Invalid file: {args.file}")
+            _logger.error(f"Invalid file: {args.file}")
             sys.exit(1)
     else:
-        print("Error. One or more of --file or --dry-run are required.")
+        _logger.error("One or more of --file or --dry-run are required")
         sys.exit(1)
 
     base_directory = os.getcwd()
@@ -141,14 +143,14 @@ def main():
     clean_folder(audio_directory)
     extract_audio(input_file, audio_file_name)
 
-    print("Splitting on silent parts in audio file")
+    _logger.info("Splitting on silent parts in audio file")
     remove_silent_segments(audio_file_name)
 
     audiofiles = [file for file in os.listdir(audio_directory) if file.startswith(video_prefix)]
     audiofiles = sort_alphanumeric(audiofiles)
     audiofiles.remove(os.path.basename(audio_file_name))
 
-    print("\nRunning inference:")
+    _logger.info("Running inference...")
     ds = create_model(ds_model, ds_scorer) 
 
     for filename in tqdm(audiofiles):
@@ -157,7 +159,7 @@ def main():
 
     for format in output_file_handle_dict:
         file_handle = output_file_handle_dict[format]
-        print(format.upper(), "file saved to", file_handle.name)
+        _logger.info(f"{format.upper()}, file saved to, {file_handle.name}")
         file_handle.close()
 
 
