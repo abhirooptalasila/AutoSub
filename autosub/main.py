@@ -5,16 +5,16 @@ import os
 import re
 import sys
 import wave
-import logger
+from . import logger
 import argparse
 
 import numpy as np
 from tqdm import tqdm
 
-from utils import *
-from writeToFile import write_to_file
-from audioProcessing import extract_audio
-from segmentAudio import remove_silent_segments
+from .utils import *
+from .writeToFile import write_to_file
+from .audioProcessing import extract_audio
+from .segmentAudio import remove_silent_segments
 
 _logger = logger.setup_applevel_logger(__name__)
 
