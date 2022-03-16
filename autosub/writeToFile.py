@@ -6,9 +6,18 @@ import datetime
 
 
 def format_seconds(seconds, format=None):
+    """Convert the timing limits into something that can be used by a subtitle file.
+
+    Args:
+        seconds : timing limits
+        format : subtitle format
+    """
+    
     fmt = '%H:%M:%S,%f' if format == "srt" else '%H:%M:%S.%f'
-    return datetime.datetime.fromtimestamp(seconds, tz=datetime.timezone.utc).strftime(fmt)[:-3]
+    
     # -3: cut microseconds to milliseconds
+    return datetime.datetime.fromtimestamp(seconds, tz=datetime.timezone.utc).strftime(fmt)[:-3]
+    
 
 
 
