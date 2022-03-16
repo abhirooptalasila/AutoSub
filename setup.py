@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="AutoSub",
-    packages="autosub",
+    packages=["autosub"],
     version="0.0.1",
     author="Abhiroop Talasila",
     author_email="abhiroop.talasila@gmail.com",
@@ -25,4 +25,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.5',
+    entry_points={
+        "console_scripts": ["autosub=autosub:main.main"]
+    },
 )
