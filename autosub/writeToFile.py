@@ -4,21 +4,21 @@
 import datetime
 
 
-def get_timestamp_string(timedelta, format):
-    """Convert the timedelta into something that can be used by a subtitle file.
+
+def format_seconds(seconds, format=None):
+    """Convert the timing limits into something that can be used by a subtitle file.
 
     Args:
-        timedelta : timedelta timestmap
+        seconds : timing limits
         format : subtitle format
     """
     
-    sep = '.' if format == "vtt" else ','
-    # timedelta may be eg, '0:00:14'
-    if '.' in str(timedelta):
-        timestamp = "0" + str(timedelta).split(".")[0] + sep + str(timedelta).split(".")[-1][:3]
-    else:
-        timestamp = "0" + str(timedelta) + sep + "000"
-    return timestamp
+    fmt = '%H:%M:%S,%f' if format == "srt" else '%H:%M:%S.%f'
+    
+    # -3: cut microseconds to milliseconds
+    return datetime.datetime.fromtimestamp(seconds, tz=datetime.timezone.utc).strftime(fmt)[:-3]
+    
+
 
 
 def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cues):
@@ -33,8 +33,8 @@ def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cu
     """
 
     for format in output_file_handle_dict.keys():
-        from_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[0])), format)
-        to_dur = get_timestamp_string(datetime.timedelta(seconds=float(limits[1])), format)
+        from_dur = format_seconds(limits[0], format)
+        to_dur = format_seconds(limits[1], format)
 
         file_handle = output_file_handle_dict[format]
         if format == 'srt':
@@ -55,7 +55,7 @@ def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cu
             file_handle.write(words[0] + " ")
             cue_timed_text = ""
             for pair in zip(cues[1:], words[1:]):
-                timestamp = get_timestamp_string(datetime.timedelta(seconds=pair[0]), format="vtt")
+                timestamp = format_seconds(pair[0], "vtt")
                 word = pair[1]
                 cue_timed_text += f"<{timestamp}><c> {word}</c>".format(timestamp=timestamp, word=word)
 
@@ -63,3 +63,4 @@ def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cu
             file_handle.write(cue_timed_text + "\n\n")
         elif format == 'txt':
             file_handle.write(inferred_text + ". ")
+ 
