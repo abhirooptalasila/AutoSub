@@ -63,4 +63,6 @@ def write_to_file(output_file_handle_dict, inferred_text, line_count, limits, cu
             file_handle.write(cue_timed_text + "\n\n")
         elif format == 'txt':
             file_handle.write(inferred_text + ". ")
- 
+
+        # write to disk often, so we dont lose output on crash
+        file_handle.flush()
