@@ -3,7 +3,7 @@
 
 import sys
 import shlex
-import logger
+from . import logger
 import subprocess
 import numpy as np
 from os.path import basename
