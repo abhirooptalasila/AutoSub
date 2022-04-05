@@ -86,7 +86,7 @@ def main():
     parser = argparse.ArgumentParser(description="AutoSub")
     parser.add_argument("--format", choices=supported_output_formats, nargs="+",
                         help="Create only certain output formats rather than all formats",
-                        default=supported_output_formats)
+                        default=supported_output_formats[0])
     parser.add_argument("--split-duration", dest="split_duration", type=float, default=5,
                         help="Split run-on sentences exceededing this duration (in seconds) into multiple subtitles")
     parser.add_argument("--dry-run", dest="dry_run", action="store_true",
