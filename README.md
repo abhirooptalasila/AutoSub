@@ -23,17 +23,15 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
     $ git clone https://github.com/abhirooptalasila/AutoSub
     $ cd AutoSub
     ```
-* Create a virtual environment to install the required packages. All further steps should be performed while in the `AutoSub/` directory
+* [OPTIONAL] Create a virtual environment to install the required packages. By default, AutoSub will be installed globally. All further steps should be performed while in the `AutoSub/` directory
     ```bash
     $ python3 -m pip install --user virtualenv
-    $ virtualenv sub
+    $ virtualenv -p python3 sub
     $ source sub/bin/activate
     ```
-* Use the corresponding requirements file depending on whether you have a GPU or not. Make sure you have the appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.3/USING.html#cuda-dependency-inference) version
+* Use the corresponding requirements file depending on whether you have a GPU or not. If you want to install for a GPU, replace `requirements.txt` with `requirements-gpu.txt`. Make sure you have the appropriate [CUDA](https://deepspeech.readthedocs.io/en/v0.9.3/USING.html#cuda-dependency-inference) version
     ```bash
-    $ pip3 install -r requirements.txt
-    OR
-    $ pip3 install -r requirements-gpu.txt
+    $ pip install .
     ```
 * Install FFMPEG. If you're on Ubuntu, this should work fine
     ```bash

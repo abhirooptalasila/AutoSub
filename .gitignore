@@ -45,6 +45,7 @@ Thumbs.db
 *.scorer
 *.hdf5
 *.h5
+*.tflite
 
 # Venv
 sub/*

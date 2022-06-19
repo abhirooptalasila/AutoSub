@@ -8,6 +8,11 @@ ARG DEPSLIST=requirements.txt
 
 ENV PYTHONUNBUFFERED 1
 
+COPY *.pbmm ./
+COPY *.scorer ./
+COPY setup.py ./
+COPY autosub ./autosub
+
 RUN DEBIAN_FRONTEND=noninteractive apt update && \
     apt -y install ffmpeg libsm6 libxext6 python3 python3-pip && \
     apt -y clean && \
@@ -15,11 +20,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt update && \
 
 COPY $DEPSLIST ./requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
-
-COPY *.pbmm ./
-COPY *.scorer ./
-COPY setup.py ./
-COPY autosub ./autosub
 
 RUN mkdir audio output
 
