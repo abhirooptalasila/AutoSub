@@ -19,6 +19,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt update && \
 	rm -rf /var/lib/apt/lists/*
 
 COPY $DEPSLIST ./requirements.txt
+
+# make sure pip is up-to-date
+RUN python3 -m pip install --upgrade pip
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 RUN mkdir audio output
