@@ -5,16 +5,16 @@ import os
 import re
 import sys
 import wave
-from . import logger
+from autosub import logger
 import argparse
 
 import numpy as np
 from tqdm import tqdm
 
-from .utils import *
-from .writeToFile import write_to_file
-from .audioProcessing import extract_audio
-from .segmentAudio import remove_silent_segments
+from autosub.utils import *
+from autosub.writeToFile import write_to_file
+from autosub.audioProcessing import extract_audio
+from autosub.segmentAudio import remove_silent_segments
 
 _logger = logger.setup_applevel_logger(__name__)
 
@@ -86,7 +86,7 @@ def main():
     parser = argparse.ArgumentParser(description="AutoSub")
     parser.add_argument("--format", choices=supported_output_formats, nargs="+",
                         help="Create only certain output formats rather than all formats",
-                        default=supported_output_formats[0])
+                        default=[supported_output_formats[0]])
     parser.add_argument("--split-duration", dest="split_duration", type=float, default=5,
                         help="Split run-on sentences exceededing this duration (in seconds) into multiple subtitles")
     parser.add_argument("--dry-run", dest="dry_run", action="store_true",
