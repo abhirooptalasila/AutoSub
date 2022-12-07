@@ -2,13 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import os
-from . import logger
 import numpy as np
 
-from . import trainAudio as TA
 from pydub import AudioSegment
-from . import featureExtraction as FE
 import scipy.io.wavfile as wavfile
+
+# Local imports
+import logger
+import trainAudio as TA
+import featureExtraction as FE
 
 _logger = logger.setup_applevel_logger(__name__)
 
