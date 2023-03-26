@@ -174,7 +174,7 @@ def main():
     ds = create_model(args.engine, ds_model, ds_scorer) 
 
     _logger.info("Starting transcription")
-    progress = tqdm(total=len(audiofiles), desc="Inference", position=0)
+    progress = tqdm(total=len(audiofiles), desc="Inference", position=0, dynamic_ncols=False)
     for filename in audiofiles:
         audio_segment_path = os.path.join(audio_directory, filename)
         ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)

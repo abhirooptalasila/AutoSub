@@ -5,7 +5,7 @@ services:
     build: .
     dockerfile: ${DOCKERFILE:-Dockerfile.gpu}
     volumes:
-      - ./data/input:/input
-      - ./data/output:/output
+      - ${INPUT:-./data/input}:/input
+      - ${OUTPUT:-./data/output}:/output
       - ./deepspeech:/deepspeech
     command: ./run.sh
