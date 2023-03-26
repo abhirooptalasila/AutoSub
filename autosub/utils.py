@@ -123,21 +123,26 @@ def create_model(engine, model, scorer):
 
     Args:
         engine : "ds" for DeepSpeech and "stt" for Coqui STT
-        model : .pbmm model file
+        model : .pbmm or .tflite model file
         scorer : .scorer file
     """
 
-    try:
-        if engine == "ds":
-            ds = DModel(model)
-        else:
-            ds = SModel(model)
-    except:
-        _logger.error("Invalid model file")
+    if engine == "ds":
+        _logger.debug("Loading DeepSpeech model")
+        ds = DModel(model)
+        _logger.debug("Completed loading DeepSpeech model")
+    elif engine == "stt":
+        _logger.debug("Loading Coqui STT model")
+        ds = SModel(model)
+        _logger.debug("Completed loading Coqui STT model")
+    else:
+        _logger.error("Invalid engine")
         sys.exit(1)
 
     try:
+        _logger.debug("Loading scorer")
         ds.enableExternalScorer(scorer)
+        _logger.debug("Completed loading scorer")
     except:
         _logger.warn("Invalid scorer file. Running inference using only model file")
     return(ds)

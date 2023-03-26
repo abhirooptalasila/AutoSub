@@ -1,10 +1,10 @@
-#ARG BASEIMAGE=ubuntu:18.04
-ARG BASEIMAGE=nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
+ARG BASEIMAGE=ubuntu:18.04
+#ARG BASEIMAGE=nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
 
 FROM ${BASEIMAGE}
 
-#ARG DEPSLIST=requirements.txt
-ARG DEPSLIST=requirements-gpu.txt
+ARG DEPSLIST=requirements.txt
+#ARG DEPSLIST=requirements-gpu.txt
 
 ENV PYTHONUNBUFFERED 1
 

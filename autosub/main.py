@@ -173,9 +173,12 @@ def main():
     _logger.info("Running inference...")
     ds = create_model(args.engine, ds_model, ds_scorer) 
 
-    for filename in tqdm(audiofiles, desc="Inference"):
+    progress = tqdm(total=len(audiofiles), desc="Inference", position=0)
+    for filename in audiofiles:
         audio_segment_path = os.path.join(audio_directory, filename)
         ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)
+        progress.update(1)
+    progress.close()
 
     for format in output_file_handle_dict:
         file_handle = output_file_handle_dict[format]
