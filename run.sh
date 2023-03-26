@@ -8,7 +8,7 @@ shopt -s nullglob # prevent errors if no files are found
 
 #Get model and scorer names from the model directory.
 #Ignore if doesn't exist
-model=$(find /deepspeech -name '*.pbmm' -print -quit)
+model=$(find /deepspeech \( -name '*.pbmm' -o -name '*.tflite' \) -print -quit)
 scorer=$(find /deepspeech -name '*.scorer' -print -quit)
 
 for file in "$input_path"/*.wav; do
