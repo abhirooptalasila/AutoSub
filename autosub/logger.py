@@ -5,7 +5,7 @@ APP_NAME = "AutoSub"
 
 def setup_applevel_logger(logger_name = APP_NAME, file_name=None): 
     logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter("[%(levelname)s] %(message)s") #%(name)s |
     sh = logging.StreamHandler(sys.stdout)
     sh.setFormatter(formatter)

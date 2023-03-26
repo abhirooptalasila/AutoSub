@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  autosub:
+    build: .
+    volumes:
+      - ./data/input:/input
+      - ./data/output:/output
+      - ./deepspeech:/deepspeech
+    command: ./run.sh

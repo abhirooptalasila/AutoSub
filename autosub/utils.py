@@ -62,10 +62,10 @@ def download_model(engine, fname):
         fname : either of "model" or "scorer"
     """
 
-    _logger.info(f"{fname.capitalize()} not found locally. Downloading")
     try:
         _file = _models[engine][fname]
-        command = ["wget", _file, "-q", "--show-progress"]
+        _logger.warning(f"{fname.capitalize()} not found locally. Downloading: {_file}")
+        command = ["wget", _file, "-q"]
         ret = subprocess.run(command).returncode
     except Exception as e:
         _logger.error(str(e))
