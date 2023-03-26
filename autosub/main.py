@@ -173,6 +173,7 @@ def main():
     _logger.info("Running inference...")
     ds = create_model(args.engine, ds_model, ds_scorer) 
 
+    _logger.info("Starting transcription")
     progress = tqdm(total=len(audiofiles), desc="Inference", position=0)
     for filename in audiofiles:
         audio_segment_path = os.path.join(audio_directory, filename)
