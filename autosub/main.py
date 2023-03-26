@@ -9,7 +9,7 @@ from . import logger
 import argparse
 
 import numpy as np
-# from tqdm import tqdm
+from tqdm import tqdm
 
 from autosub.utils import *
 from autosub.writeToFile import write_to_file
@@ -173,7 +173,7 @@ def main():
     _logger.info("Running inference...")
     ds = create_model(args.engine, ds_model, ds_scorer) 
 
-    for filename in audiofiles:
+    for filename in tqdm(audiofiles, desc="Inference"):
         audio_segment_path = os.path.join(audio_directory, filename)
         ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)
 
