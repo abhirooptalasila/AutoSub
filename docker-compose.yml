@@ -3,7 +3,7 @@ version: '3'
 services:
   autosub:
     build: .
-    dockerfile: Dockerfile.gpu
+    dockerfile: ${DOCKERFILE:-Dockerfile.gpu}
     volumes:
       - ./data/input:/input
       - ./data/output:/output

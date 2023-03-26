@@ -78,10 +78,22 @@ The docker compose file allows for easy processing of multiple MP4 or WAV files 
 docker-compose up
 ```
 
+To use the CPU implementation instead of GPU, change the dockefile with the environment variable `DOCKERFILE`:
+
+``` bash
+docker-compose up -e DOCKERFILE=Dockerfile.cpu
+```
+
 If you haven't built it already, append the flag `--build` at the end of the command:
 
 ``` bash
 docker-compose up --build
+```
+
+or
+
+``` bash
+docker-compose up -e DOCKERFILE=Dockerfile.cpu --build
 ```
 
 Once the process thas finished, the output SRTs will be located at `data/output`.
