@@ -49,8 +49,9 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
 
 * If you don't have the model files, get them
     ```bash
-    $ ./getmodels.sh 0.9.3
+    $ ./getmodels.sh -m 0.9.3 -t stt
     ```
+    More options are available with `./getmodels.sh -h`
 * For a CPU build
     ```bash
     $ docker build -t autosub .
@@ -68,6 +69,22 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
     $ docker run --volume=`pwd`/input:/input --name autosub autosub-instance --file ~/video.mp4
     $ docker cp autosub:/output/ .
     ```
+
+## Docker-Compose
+
+The docker compose file allows for easy processing of multiple MP4 or WAV files at once. Create a folder `data/input` in the root directory and paste all of the media files to be transcripted. Then, run:
+
+``` bash
+docker-compose up
+```
+
+If you haven't built it already, append the flag `--build` at the end of the command:
+
+``` bash
+docker-compose up --build
+```
+
+Once the process thas finished, the output SRTs will be located at `data/output`.
 
 ## How-to example
 
