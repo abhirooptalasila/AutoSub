@@ -9,4 +9,11 @@ services:
       - ${INPUT:-./data/input}:/input
       - ${OUTPUT:-./data/output}:/output
       - ./deepspeech:/deepspeech
-    command: ./run.sh
+    command: ./run.sh ${ENGINE:-stt}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

@@ -149,3 +149,4 @@ I would love to follow up on any suggestions/issues you find :)
 1. https://github.com/mozilla/DeepSpeech/
 2. https://github.com/tyiannak/pyAudioAnalysis
 3. https://deepspeech.readthedocs.io/
+4. [Quick guide to install nvidia container toolkit](https://www.server-world.info/en/note?os=Ubuntu_20.04&p=nvidia&f=2)
