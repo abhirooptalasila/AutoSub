@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  autosub:
+    build:
+        context: .
+        dockerfile: ${DOCKERFILE:-Dockerfile.gpu}
+    volumes:
+      - ${INPUT:-./data/input}:/input
+      - ${OUTPUT:-./data/output}:/output
+      - ./deepspeech:/deepspeech
+    command: ./run.sh ${ENGINE:-stt}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

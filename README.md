@@ -49,8 +49,9 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
 
 * If you don't have the model files, get them
     ```bash
-    $ ./getmodels.sh 0.9.3
+    $ ./getmodels.sh -m 0.9.3 -t stt
     ```
+    More options are available with `./getmodels.sh -h`
 * For a CPU build
     ```bash
     $ docker build -t autosub .
@@ -68,6 +69,40 @@ AutoSub is a CLI application to generate subtitle files (.srt, .vtt, and .txt tr
     $ docker run --volume=`pwd`/input:/input --name autosub autosub-instance --file ~/video.mp4
     $ docker cp autosub:/output/ .
     ```
+
+## Docker-Compose
+
+The docker compose file allows for easy processing of multiple MP4 or WAV files at once. Create a folder `data/input` in the root directory and paste all of the media files to be transcripted. Then, run:
+
+``` bash
+docker-compose up
+```
+
+To use the CPU implementation instead of GPU, change the dockefile with the environment variable `DOCKERFILE`:
+
+``` bash
+DOCKERFILE=Dockerfile.cpu docker-compose up
+```
+
+If you haven't built it already, append the flag `--build` at the end of the command:
+
+``` bash
+docker-compose up --build
+```
+
+or
+
+``` bash
+DOCKERFILE=Dockerfile.cpu docker-compose up --build
+```
+
+Once the process thas finished, the output SRTs will be located at `data/output`.
+
+To specify custom paths, use the `INPUT` and `OUTPUT` variables:
+
+``` bash
+INPUT=/folder/to/input OUTPUT=/folder/to/output docker-compose up
+```
 
 ## How-to example
 
@@ -114,3 +149,4 @@ I would love to follow up on any suggestions/issues you find :)
 1. https://github.com/mozilla/DeepSpeech/
 2. https://github.com/tyiannak/pyAudioAnalysis
 3. https://deepspeech.readthedocs.io/
+4. [Quick guide to install nvidia container toolkit](https://www.server-world.info/en/note?os=Ubuntu_20.04&p=nvidia&f=2)

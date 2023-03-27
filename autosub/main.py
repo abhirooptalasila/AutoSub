@@ -5,7 +5,7 @@ import os
 import re
 import sys
 import wave
-from autosub import logger
+from . import logger
 import argparse
 
 import numpy as np
@@ -95,6 +95,7 @@ def main():
     parser.add_argument("--engine", choices=supported_engines, nargs="?", default="stt",
                         help="Select either DeepSpeech or Coqui STT for inference. Latter is default")
     parser.add_argument("--file", required=False, help="Input video file")
+    parser.add_argument("--wav", required=False, help="Input wav file")
     parser.add_argument("--model", required=False, help="Input *.pbmm model file")
     parser.add_argument("--scorer", required=False, help="Input *.scorer file")
     
@@ -120,22 +121,35 @@ def main():
         else:
             _logger.error(f"Invalid file: {args.file}")
             sys.exit(1)
+    elif args.wav is not None:
+        if os.path.isfile(args.wav):
+            input_file = args.wav
+            _logger.info(f"Input file: {args.wav}")
+        else:
+            _logger.error(f"Invalid file: {args.wav}")
+            sys.exit(1)
     else:
-        _logger.error("One or more of --file or --dry-run are required")
+        _logger.error("One or more of --file or --dry-run or --wav are required")
         sys.exit(1)
 
+    # File names
     base_directory = os.getcwd()
     output_directory = os.path.join(base_directory, "output")
+    file_prefix = os.path.splitext(os.path.basename(input_file))[0]
     audio_directory = os.path.join(base_directory, "audio")
-    video_prefix = os.path.splitext(os.path.basename(input_file))[0]
-    audio_file_name = os.path.join(audio_directory, video_prefix + ".wav")
+    _logger.debug(f"Audio directory: {audio_directory}")
+    if args.wav is not None:
+        audio_file_name = input_file
+    else:
+        audio_file_name = os.path.join(audio_directory, file_prefix + ".wav")
+        os.makedirs(audio_directory, exist_ok=True)
     
     os.makedirs(output_directory, exist_ok=True)
     os.makedirs(audio_directory, exist_ok=True)
     output_file_handle_dict = {}
 
     for format in args.format:
-        output_filename = os.path.join(output_directory, video_prefix + "." + format)
+        output_filename = os.path.join(output_directory, file_prefix + "." + format)
         # print("Creating file: " + output_filename)
         output_file_handle_dict[format] = open(output_filename, "w")
         # For VTT format, write header
@@ -144,21 +158,28 @@ def main():
             output_file_handle_dict[format].write("Kind: captions\n\n")
 
     clean_folder(audio_directory)
-    extract_audio(input_file, audio_file_name)
+    if args.wav is None:
+        extract_audio(input_file, audio_file_name)
 
     _logger.info("Splitting on silent parts in audio file")
-    remove_silent_segments(audio_file_name)
+    remove_silent_segments(audio_file_name, output_dir = audio_directory)
 
-    audiofiles = [file for file in os.listdir(audio_directory) if file.startswith(video_prefix)]
+    _logger.debug(f"audio_directory: {os.listdir(audio_directory)[:5]}")
+
+    audiofiles = [file for file in os.listdir(audio_directory) if file.startswith(file_prefix)]
     audiofiles = sort_alphanumeric(audiofiles)
-    audiofiles.remove(os.path.basename(audio_file_name))
+    audiofiles.remove(os.path.basename(audio_file_name)) if args.wav is None else None
 
     _logger.info("Running inference...")
     ds = create_model(args.engine, ds_model, ds_scorer) 
 
-    for filename in tqdm(audiofiles):
+    _logger.info("Starting transcription")
+    progress = tqdm(total=len(audiofiles), desc="Inference", position=0, dynamic_ncols=False)
+    for filename in audiofiles:
         audio_segment_path = os.path.join(audio_directory, filename)
         ds_process_audio(ds, audio_segment_path, output_file_handle_dict, split_duration=args.split_duration)
+        progress.update(1)
+    progress.close()
 
     for format in output_file_handle_dict:
         file_handle = output_file_handle_dict[format]

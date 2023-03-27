@@ -49,9 +49,14 @@ Thumbs.db
 
 # Venv
 sub/*
-__pycache__
+**/__pycache__/
 
 # Folders
 audio/
 sub/
 output/
+model/
+
+.gitgitignore
+
+data/
