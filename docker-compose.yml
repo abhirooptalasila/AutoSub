@@ -2,8 +2,9 @@ version: '3'
 
 services:
   autosub:
-    build: .
-    dockerfile: ${DOCKERFILE:-Dockerfile.gpu}
+    build:
+        context: .
+        dockerfile: ${DOCKERFILE:-Dockerfile.gpu}
     volumes:
       - ${INPUT:-./data/input}:/input
       - ${OUTPUT:-./data/output}:/output

@@ -81,7 +81,7 @@ docker-compose up
 To use the CPU implementation instead of GPU, change the dockefile with the environment variable `DOCKERFILE`:
 
 ``` bash
-docker-compose up -e DOCKERFILE=Dockerfile.cpu
+DOCKERFILE=Dockerfile.cpu docker-compose up
 ```
 
 If you haven't built it already, append the flag `--build` at the end of the command:
@@ -93,10 +93,16 @@ docker-compose up --build
 or
 
 ``` bash
-docker-compose up -e DOCKERFILE=Dockerfile.cpu --build
+DOCKERFILE=Dockerfile.cpu docker-compose up --build
 ```
 
 Once the process thas finished, the output SRTs will be located at `data/output`.
+
+To specify custom paths, use the `INPUT` and `OUTPUT` variables:
+
+``` bash
+INPUT=/folder/to/input OUTPUT=/folder/to/output docker-compose up
+```
 
 ## How-to example
 
