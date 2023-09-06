@@ -5,17 +5,14 @@ import re
 import os
 import sys
 import shutil
-from . import logger
 import subprocess
 from stt import Model as SModel
-from deepspeech import Model as DModel
+
+# Local package
+import logger
 
 _logger = logger.setup_applevel_logger(__name__)
 _models = {
-    "ds": {
-        "model": "https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.pbmm", 
-        "scorer": "https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer"
-        },
     "stt": {
         "model": "https://github.com/coqui-ai/STT-models/releases/download/english/coqui/v0.9.3/model.tflite",
         "scorer": "https://github.com/coqui-ai/STT-models/releases/download/english%2Fcoqui%2Fv1.0.0-huge-vocab/huge-vocabulary.scorer"
@@ -128,10 +125,7 @@ def create_model(engine, model, scorer):
     """
 
     try:
-        if engine == "ds":
-            ds = DModel(model)
-        else:
-            ds = SModel(model)
+        ds = SModel(model)
     except:
         _logger.error("Invalid model file")
         sys.exit(1)

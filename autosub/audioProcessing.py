@@ -3,10 +3,12 @@
 
 import sys
 import shlex
-from . import logger
 import subprocess
 import numpy as np
 from os.path import basename
+
+# Local import
+import logger
 
 try:
     from shlex import quote

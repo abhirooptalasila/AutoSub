@@ -5,16 +5,17 @@ import os
 import re
 import sys
 import wave
-from autosub import logger
 import argparse
 
 import numpy as np
 from tqdm import tqdm
 
-from autosub.utils import *
-from autosub.writeToFile import write_to_file
-from autosub.audioProcessing import extract_audio
-from autosub.segmentAudio import remove_silent_segments
+# Local imports
+import logger
+from utils import *
+from writeToFile import write_to_file
+from audioProcessing import extract_audio
+from segmentAudio import remove_silent_segments
 
 _logger = logger.setup_applevel_logger(__name__)
 
@@ -81,7 +82,7 @@ def ds_process_audio(ds, audio_file, output_file_handle_dict, split_duration):
 def main():
     global line_count
     supported_output_formats = ["srt", "vtt", "txt"]
-    supported_engines = ["ds", "stt"]
+    supported_engines = ["stt"]
 
     parser = argparse.ArgumentParser(description="AutoSub")
     parser.add_argument("--format", choices=supported_output_formats, nargs="+",
@@ -93,10 +94,12 @@ def main():
                         help="Perform dry-run to verify options prior to running. Also useful to instantiate \
                             cuda/tensorflow cache prior to running multiple times")
     parser.add_argument("--engine", choices=supported_engines, nargs="?", default="stt",
-                        help="Select either DeepSpeech or Coqui STT for inference. Latter is default")
+                        help="Select Coqui STT for inference. Latter is default")
     parser.add_argument("--file", required=False, help="Input video file")
-    parser.add_argument("--model", required=False, help="Input *.pbmm model file")
-    parser.add_argument("--scorer", required=False, help="Input *.scorer file")
+    parser.add_argument("--model", required=False, default="coqui-v1.0.0-english-huge-vocabulary.tflite",
+                        help="Input *.pbmm or *.tflite model file (default: coqui-v1.0.0-english-huge-vocabulary.tflite)")
+    parser.add_argument("--scorer", required=False, default="coqui-v1.0.0-english-huge-vocabulary.scorer",
+                        help="Input *.scorer file (default: coqui-v1.0.0-english-huge-vocabulary.scorer)")
     
     args = parser.parse_args()
     
